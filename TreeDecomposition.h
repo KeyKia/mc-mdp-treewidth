@@ -1,7 +1,3 @@
-//
-// Created by kiarash on 5/27/19.
-//
-
 #ifndef RMC_TREEWIDTH_CODE_TREEDECOMPOSITION_H
 #define RMC_TREEWIDTH_CODE_TREEDECOMPOSITION_H
 
