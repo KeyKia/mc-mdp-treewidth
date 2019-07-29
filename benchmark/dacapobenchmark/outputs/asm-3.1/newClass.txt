@@ -1,0 +1,15 @@
+[JTDec] [createTreeDec] number of lines:5
+[JTDec] [createTreeDec] successors are:{1=[2], 2=[3], 3=[4], 4=[5], 5=[]}
+Method:newClass
+Resulting Tree decomposition:
+------JTDecTree------
+width: 4
+numberOfVertices: 3
+root: 1
+height: 1
+parents: {1=1, 2=1, 3=1}
+children: {1=[1, 2, 3], 2=[], 3=[]}
+bags: {1=[1, 2, 3, 4, 5], 2=[1, 2, 3, 4], 3=[3, 4, 5]}
+rootBags: {1=1, 2=1, 3=1, 4=1, 5=1}
+levels: {1=0, 2=1, 3=1}
+---End of JTDecTree---
