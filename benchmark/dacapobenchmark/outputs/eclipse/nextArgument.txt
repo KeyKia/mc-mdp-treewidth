@@ -1,15 +1,42 @@
-[JTDec] [createTreeDec] number of lines:11
-[JTDec] [createTreeDec] successors are:{1=[2], 2=[3], 3=[4, 7], 4=[5], 5=[6], 6=[7, 8], 7=[], 8=[9], 9=[10], 10=[11], 11=[]}
-Method:nextArgument
-Resulting Tree decomposition:
-------JTDecTree------
-width: 5
-numberOfVertices: 8
-root: 1
-height: 3
-parents: {1=1, 2=1, 3=2, 4=3, 5=1, 6=1, 7=6, 8=7}
-children: {1=[1, 2, 5, 6], 2=[3], 3=[4], 4=[], 5=[], 6=[7], 7=[8], 8=[]}
-bags: {1=[1, 2, 3, 7, 8, 9], 2=[3, 6, 7, 8], 3=[3, 4, 5, 6, 7, 8], 4=[3, 4, 5, 6, 7, 8], 5=[1, 2, 3, 8], 6=[3, 8, 9, 10], 7=[8, 9, 10, 11], 8=[9, 10, 11]}
-rootBags: {1=1, 2=1, 3=1, 4=3, 5=3, 6=2, 7=1, 8=1, 9=1, 10=6, 11=7}
-levels: {1=0, 2=1, 3=2, 4=3, 5=1, 6=1, 7=2, 8=3}
----End of JTDecTree---
+Graph:
+Choose Vertices:
+Number of Vertices: 5
+11 5 1 8 4
+Probability Vertices:
+Number of Vertices: 6
+7 9 6 3 10 2
+Choose Edges:
+Number of Edges: 4
+5 6
+1 2
+8 9
+4 5
+Probability Edges:
+Number of Edges: 7
+9 10 1.0
+6 7 0.449409224099
+6 8 0.550590775901
+3 4 0.21670126417
+3 7 0.78329873583
+10 11 1.0
+2 3 1.0
+
+Tree:
+Vertices:
+Number of Vertices: 8
+1 2 3 7 8 9
+3 6 7 8
+3 4 5 6 7 8
+3 4 5 6 7 8
+1 2 3 8
+3 8 9 10
+8 9 10 11
+9 10 11
+Edges:
+2 1
+3 2
+4 3
+5 1
+6 1
+7 6
+8 7

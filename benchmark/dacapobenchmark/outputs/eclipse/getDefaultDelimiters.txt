@@ -1,15 +1,17 @@
-[JTDec] [createTreeDec] number of lines:1
-[JTDec] [createTreeDec] successors are:{1=[]}
-Method:getDefaultDelimiters
-Resulting Tree decomposition:
-------JTDecTree------
-width: 0
-numberOfVertices: 1
-root: 1
-height: 0
-parents: {1=1}
-children: {1=[1]}
-bags: {1=[1]}
-rootBags: {1=1}
-levels: {1=0}
----End of JTDecTree---
+Graph:
+Choose Vertices:
+Number of Vertices: 0
+
+Probability Vertices:
+Number of Vertices: 1
+1
+Choose Edges:
+Number of Edges: 0
+Probability Edges:
+Number of Edges: 0
+
+Tree:
+Vertices:
+Number of Vertices: 1
+1
+Edges:

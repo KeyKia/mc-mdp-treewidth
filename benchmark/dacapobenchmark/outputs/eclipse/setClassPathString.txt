@@ -1,15 +1,24 @@
-[JTDec] [createTreeDec] number of lines:4
-[JTDec] [createTreeDec] successors are:{1=[2], 2=[3], 3=[4], 4=[]}
-Method:setClassPathString
-Resulting Tree decomposition:
-------JTDecTree------
-width: 3
-numberOfVertices: 3
-root: 1
-height: 1
-parents: {1=1, 2=1, 3=1}
-children: {1=[1, 2, 3], 2=[], 3=[]}
-bags: {1=[1, 2, 3, 4], 2=[1, 2, 3], 3=[2, 3, 4]}
-rootBags: {1=1, 2=1, 3=1, 4=1}
-levels: {1=0, 2=1, 3=1}
----End of JTDecTree---
+Graph:
+Choose Vertices:
+Number of Vertices: 2
+4 2
+Probability Vertices:
+Number of Vertices: 2
+1 3
+Choose Edges:
+Number of Edges: 1
+2 3
+Probability Edges:
+Number of Edges: 2
+1 2 1.0
+3 4 1.0
+
+Tree:
+Vertices:
+Number of Vertices: 3
+1 2 3 4
+1 2 3
+2 3 4
+Edges:
+2 1
+3 1
