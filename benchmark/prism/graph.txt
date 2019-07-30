@@ -1,0 +1,14 @@
+Choose Vertices:
+Number of Vertices: 1
+0
+Probability Vertices:
+Number of Vertices: 2
+2 4
+Choose Edges:
+Number of Edges: 2
+0 2
+0 4
+Probability Edges:
+Number of Edges: 2
+2 1 0.5
+4 1 0.5
