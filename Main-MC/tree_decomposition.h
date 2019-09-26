@@ -46,6 +46,6 @@ int get_last_extra_vertex(bag *, bag *);  //returns the last vertex in first bag
 void remove_vertex(bag *,int); //removes vertex while keeping hitting probs unchanged
 void return_vertex(bag *, int); //returns vertex and computes its hitting prob
 void init_res(bag *,int); //initializes the final hitting probs for the root bag (used once after dfs_up)
-void print_edge(edge *);
+void print_edge(edge *); //prints an edge with endpoints and prob
 
 #endif //RMC_TREEWIDTH_CODE_TREE_DECOMPOSITION_H

@@ -3,13 +3,11 @@
 //
 
 //TODO: input assumptions:
-/* root is bag 0 and contains the target
- * edges of the tdc are from parent(v) to child(u)
- * all possible edges of each bag shall be given in edges (even with 0 prob)
+/* Root is bag 0 and contains exactly two vertices including the target
+ * Edges of the tdc are from parent (v) to child (u)
+ * All possible edges of each bag are given in edges (even with 0 prob)
  * (and even all the loops - which might have 0 prob)
- * all edges shall be given in both direction (even with 0 prob)
- * the entered Markov chain MUST be sade (simple)
- * the root bag must contain exactly two vertices
+ * All edges are given in both directions (even with 0 prob)
  */
 
 #include <stdio.h>
@@ -27,7 +25,6 @@ int totV,totE,target; // vertices, edges, and target in the Markov chain
 
 void input()
 {
-
 
     FILE* fp=fopen("/home/kiarash/Desktop/rmc/rmc-treewidth-code/Main-MC/example.txt","r");
     int i,j;
@@ -102,6 +99,7 @@ void input()
         bag_add_kid(bags_copy+*vt,bags_copy+*ut);
     }
     fclose(fp);
+
 }
 
 
@@ -148,9 +146,7 @@ void dfs_down(int curIndex,int parIndex)
         }
 
         dfs_down(kidIndex,curIndex);
-
     }
-
 
 }
 
@@ -172,6 +168,7 @@ void show_results()
     for(i=0;i<totV;i++)
         printf("Hitting prob of vertex %d: %f\n", i, res[i]);
 }
+
 int main()
 {
     input();
