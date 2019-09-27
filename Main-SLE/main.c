@@ -7,6 +7,7 @@
  * In each equation, the index of the constant is -1
  * When entring an edge, user should specify the equations corresponding to that edge
  * There MUST be an edge between ALL pairs of vertices in each bag (even if they are together in 0 equations)
+ * Variable indexes don't have to be sorted
  */
 
 #include <stdio.h>
@@ -26,6 +27,8 @@ bool removed[MAXN];
 vector e; //contains all possible edges of each bag (even with 0 prob)
 bag bags[MAXN]; //the bags
 int totV,totE; // vertices, edges
+int ansInd[MAXN];
+vector removed_order;
 
 void input()
 {
@@ -118,11 +121,47 @@ void input()
 
 }
 
+void update_edges(bag *b, int ind)
+{
+    int i, j, k;
+    for (i=0; i<b->verCnt; i++)
+        for (j=i+1; j<b->verCnt; j++)
+        {
+            bool f1=false, f2=false;
+            for (k=0; k<vector_total(eqInd+ind); k++)
+            {
+                int var=*(int *)vector_get(eqInd+ind, k);
+                if (var==*get_vertex(b, i))
+                    f1=true;
+                if (var==*get_vertex(b, j))
+                    f2=true;
+            }
+            if(!f1 || !f2)
+                continue;
+            edge *ej=b->edges[i][j];
+            bool f3=false;
+            for(k=0;k<vector_total(&(ej->eqs));k++)
+                if(*(int *)vector_get(&(ej->eqs),k)==ind)
+                    f3=true;
+            if(!f3)
+            {
+                int *tmp_ind=malloc(sizeof(int));
+                *tmp_ind=ind;
+                vector_add(&(ej->eqs), &tmp_ind);
+            }
+        }
+}
+
 void remove_vertex(bag *b,int v)
 {
+    //add the vertex to removed_order
+    int *v_tmp=malloc(sizeof(int));
+    *v_tmp=v;
+    vector_add(&removed_order, v_tmp);
+
     vector conEq;
     vector_init(&conEq);
-    int i,j;
+    int i,j,k;
     int vIndex=get_vertex_index(b,v);
 
     /* make conEq which should contain all the indices of eqs
@@ -140,10 +179,40 @@ void remove_vertex(bag *b,int v)
         }
     }
 
-    vector ort=k_independent(&conEq, b);
-    //get ort[0], make x_v=something, replace x_v with something in ort[1...], done
+    vector indeps=k_independent(&conEq, b);
 
-
+    //get indeps[0], make x_v=something, replace x_v with something in indeps[1...], done
+    int ind0=*(int *)vector_get(&indeps, 0);
+    ansInd[v]=ind0; //The equation with which we can compute x_v in the backward pass
+    for (i=1; i<vector_total(&indeps); i++)
+    {
+        int indi=*(int *)vector_get(&indeps, i);
+        for (j=0; j<vector_total(eqInd+ind0); j++)
+        {
+            int *var=malloc(sizeof(int));
+            *var=*(int *)vector_get(eqInd+ind0, j);
+            float *coef=malloc(sizeof(float));
+            *coef=*(float *)vector_get(eqCoef+ind0,j);
+            *coef*=-1;
+            if (*var==v)
+                continue;
+            bool found=false;
+            for (k=0; k<vector_total(eqInd+indi); k++)
+                if (*(int *)vector_get(eqInd+indi, k) == *var)
+                {
+                    found=true;
+                    *(float *)vector_get(eqCoef+indi, k) += *coef;
+                }
+            if (!found){
+                vector_add(eqInd+indi, var);
+                vector_add(eqCoef+indi, coef);
+            }
+        }
+        // no need to take care of possible zeros produced
+        // but some edges might be added as some coefs are becoming non-zero
+        update_edges(b, indi);
+    }
+    removed[ind0]=true;
 }
 
 void dfs(int curIndex,int parIndex)
@@ -167,7 +236,17 @@ void dfs(int curIndex,int parIndex)
 
 void solve()
 {
+    vector_init(&removed_order);
     dfs(0,-1);
+    int i,j,k;
+    for (i=0;i<eqCnt;i++)
+        if(!removed[i])
+        {
+            for(j=0;j<vector_total(eqInd+i);j++)
+            {
+                printf("%d %f\n",*(int *)vector_get(eqInd+i,j),*(float *)vector_get(eqCoef+i,j));
+            }
+        }
 }
 
 void show_results()
