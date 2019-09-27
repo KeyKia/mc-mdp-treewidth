@@ -5,8 +5,8 @@
 //TODO: input assumptions:
 /* Each equation is given as pairs of variable index and coeficient
  * In each equation, the index of the constant is -1
- * Indices MUST be sorted increasingly
  * When entring an edge, user should specify the equations corresponding to that edge
+ * There MUST be an edge between ALL pairs of vertices in each bag (even if they are together in 0 equations)
  */
 
 #include <stdio.h>
@@ -16,10 +16,13 @@
 #include <math.h>
 #include "vector.h"
 #include "tree_decomposition.h"
+#include "gram_schmidt.h"
+#include "derive_independent_eqs.h"
 
 int eqCnt, varCnt; //number of equations and variables
 int eqSize[MAXN];
 vector eqInd[MAXN],eqCoef[MAXN];
+bool removed[MAXN];
 vector e; //contains all possible edges of each bag (even with 0 prob)
 bag bags[MAXN]; //the bags
 int totV,totE; // vertices, edges
@@ -115,6 +118,34 @@ void input()
 
 }
 
+void remove_vertex(bag *b,int v)
+{
+    vector conEq;
+    vector_init(&conEq);
+    int i,j;
+    int vIndex=get_vertex_index(b,v);
+
+    /* make conEq which should contain all the indices of eqs
+     * having x_v
+     */
+    for(i=0;i<b->verCnt;i++)
+    {
+        edge *ej=b->edges[vIndex][i];
+        vector *eqPointer=&(ej->eqs);
+        for(j=0;j<vector_total(eqPointer);j++)
+        {
+            int ind=*(int *) vector_get(eqPointer, j);
+            if (!removed[ind])
+                vector_add(&conEq, (int *) vector_get(eqPointer, j));
+        }
+    }
+
+    vector ort=k_independent(&conEq, b);
+    //get ort[0], make x_v=something, replace x_v with something in ort[1...], done
+
+
+}
+
 void dfs(int curIndex,int parIndex)
 {
     int i;
@@ -125,6 +156,13 @@ void dfs(int curIndex,int parIndex)
         if(ind!=parIndex)
             dfs(ind,curIndex);
     }
+
+    if(parIndex!=-1)
+        while(get_first_extra_vertex(bags+curIndex,bags+parIndex)!=-1)
+        {
+            int v=get_first_extra_vertex(bags+curIndex,bags+parIndex);
+            remove_vertex(bags+curIndex,v);
+        }
 }
 
 void solve()
