@@ -5,150 +5,70 @@
 #ifndef RMC_TREEWIDTH_CODE_GAUSSIAN_ELIMINATION_H
 #define RMC_TREEWIDTH_CODE_GAUSSIAN_ELIMINATION_H
 
+#include <math.h>                                     // required for fabs()
 
-#include "tree_decomposition.h"
-#include <stdio.h>
-#include <math.h>
-
-// function to reduce matrix to r.e.f.  Returns a value to
-// indicate whether matrix is singular or not
-int forwardElim(float mat[MAX_TREEWIDTH][MAX_TREEWIDTH+1]);
-
-// function to calculate the values of the unknowns
-void backSub(float mat[MAX_TREEWIDTH][MAX_TREEWIDTH+1]);
-
-// function to get matrix content
-bool gaussianElimination(float mat[MAX_TREEWIDTH][MAX_TREEWIDTH+1])
+int Gaussian_Elimination(float *A, int n, float *B)
 {
-    /* reduction into r.e.f. */
-    int singular_flag = forwardElim(mat);
+    int row, i, j, pivot_row;
+    float max, dum, *pa, *pA, *A_pivot_row;
 
-    /* if matrix is singular */
-    if (singular_flag != -1)
-    {
-//        printf("Singular Matrix.\n");
+    // for each variable find pivot row and perform forward substitution
 
-        /* if the RHS of equation corresponding to
-           zero row  is 0, * system has infinitely
-           many solutions, else inconsistent*/
-        if (mat[singular_flag][MAX_TREEWIDTH])
-            return false;
-//            printf("Inconsistent System.");
-        else
-            return true;
-//            printf("May have infinitely many "
-//                   "solutions.");
+    pa = A;
+    for (row = 0; row < (n - 1); row++, pa += n) {
 
-    }
+        //  find the pivot row
 
-    /* get solution to system and print it using
-       backward substitution */
-//    backSub(mat);
-    return true;
-}
+        A_pivot_row = pa;
+        max = fabs(*(pa + row));
+        pA = pa + n;
+        pivot_row = row;
+        for (i = row + 1; i < n; pA += n, i++)
+            if ((dum = fabs(*(pA + row))) > max) {
+                max = dum; A_pivot_row = pA; pivot_row = i;
+            }
+        if (max == 0.0) return 0;                // the matrix A is singular
 
-// function for elementary operation of swapping two rows
-void swap_row(float mat[MAX_TREEWIDTH][MAX_TREEWIDTH+1], int i, int j)
-{
-    //printf("Swapped rows %d and %d\n", i, j);
-    int k;
-    for (k=0; k<=MAX_TREEWIDTH; k++)
-    {
-        float temp = mat[i][k];
-        mat[i][k] = mat[j][k];
-        mat[j][k] = temp;
-    }
-}
+        // and if it differs from the current row, interchange the two rows.
 
-// function to print matrix content at any stage
-void print(float mat[MAX_TREEWIDTH][MAX_TREEWIDTH+1])
-{
-    int i,j;
-    for (i=0; i<MAX_TREEWIDTH; i++, printf("\n"))
-        for (j=0; j<=MAX_TREEWIDTH; j++)
-            printf("%lf ", mat[i][j]);
-
-    printf("\n");
-}
-
-// function to reduce matrix to r.e.f.
-int forwardElim(float mat[MAX_TREEWIDTH][MAX_TREEWIDTH+1])
-{
-    int i,j,k;
-    for (k=0; k<MAX_TREEWIDTH; k++)
-    {
-        // Initialize maximum value and index for pivot
-        int i_max = k;
-        float v_max = mat[i_max][k];
-
-        /* find greater amplitude for pivot if any */
-        for (i = k+1; i < MAX_TREEWIDTH; i++)
-            if (fabs(mat[i][k]) > v_max)
-                v_max = mat[i][k], i_max = i;
-        printf("%d %f \n",i_max,v_max);
-        /* if a prinicipal diagonal element  is zero,
-         * it denotes that matrix is singular, and
-         * will lead to a division-by-zero later. */
-        if (!mat[k][i_max])
-            return k; // Matrix is singular
-
-        /* Swap the greatest value row with current row */
-        if (i_max != k)
-            swap_row(mat, k, i_max);
-
-
-        for (i=k+1; i<MAX_TREEWIDTH; i++)
-        {
-            /* factor f to set current row kth element to 0,
-             * and subsequently remaining kth column to 0 */
-            float f = mat[i][k]/mat[k][k];
-
-            /* subtract fth multiple of corresponding kth
-               row element*/
-            for (j=k+1; j<=MAX_TREEWIDTH; j++)
-                mat[i][j] -= mat[k][j]*f;
-
-            /* filling lower triangular matrix with zeros*/
-            mat[i][k] = 0;
+        if (pivot_row != row) {
+            for (i = row; i < n; i++) {
+                dum = *(pa + i);
+                *(pa + i) = *(A_pivot_row + i);
+                *(A_pivot_row + i) = dum;
+            }
+            dum = B[row];
+            B[row] = B[pivot_row];
+            B[pivot_row] = dum;
         }
 
-        //print(mat);        //for matrix state
-    }
-    //print(mat);            //for matrix state
-    return -1;
-}
+        // Perform forward substitution
 
-// function to calculate the values of the unknowns
-void backSub(float mat[MAX_TREEWIDTH][MAX_TREEWIDTH+1])
-{
-    double x[MAX_TREEWIDTH];  // An array to store solution
-
-    /* Start calculating from last equation up to the
-       first */
-    int i,j,k;
-    for (i = MAX_TREEWIDTH-1; i >= 0; i--)
-    {
-        /* start with the RHS of the equation */
-        x[i] = mat[i][MAX_TREEWIDTH];
-
-        /* Initialize j to i+1 since matrix is upper
-           triangular*/
-        for (j=i+1; j<MAX_TREEWIDTH; j++)
-        {
-            /* subtract all the lhs values
-             * except the coefficient of the variable
-             * whose value is being calculated */
-            x[i] -= mat[i][j]*x[j];
+        for (i = row + 1; i < n; i++) {
+            pA = A + i * n;
+            dum = - *(pA + row) / *(pa + row);
+            *(pA + row) = 0.0;
+            for (j = row + 1; j < n; j++) *(pA + j) += dum * *(pa + j);
+            B[i] += dum * B[row];
         }
-
-        /* divide the RHS by the coefficient of the
-           unknown being calculated */
-        x[i] = x[i]/mat[i][i];
     }
 
-    printf("\nSolution for the system:\n");
-    for (i=0; i<MAX_TREEWIDTH; i++)
-        printf("%lf\n", x[i]);
+    // Perform backward substitution
+
+    pa = A + (n - 1) * n;
+    for (row = n - 1; row >= 0; pa -= n, row--) {
+        if ( *(pa + row) == 0.0 ) return 0;           // matrix is singular
+        dum = 1.0 / *(pa + row);
+        for ( i = row + 1; i < n; i++) *(pa + i) *= dum;
+        B[row] *= dum;
+        for ( i = 0, pA = A; i < row; pA += n, i++) {
+            dum = *(pA + row);
+            for ( j = row + 1; j < n; j++) *(pA + j) -= dum * *(pa + j);
+            B[i] -= dum * B[row];
+        }
+    }
+    return 1;
 }
+
 
 #endif //RMC_TREEWIDTH_CODE_GAUSSIAN_ELIMINATION_H

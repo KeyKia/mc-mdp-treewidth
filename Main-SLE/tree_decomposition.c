@@ -99,7 +99,7 @@ int get_first_extra_vertex(bag *b1, bag *b2)
 {
     int i;
     for(i=0;i<b1->verCnt;i++)
-        if(!has_vertex(b2,*get_vertex(b1,i)) && !removed[*get_vertex(b1,i)])
+        if(!has_vertex(b2,*get_vertex(b1,i)) && !varRemoved[*get_vertex(b1,i)])
             return *get_vertex(b1,i);
     return -1;
 }
@@ -108,7 +108,7 @@ int get_last_extra_vertex(bag *b1, bag *b2)
 {
     int i;
     for(i=b1->verCnt-1;i>=0;i--)
-        if(!has_vertex(b2,*get_vertex(b1,i)) && !removed[*get_vertex(b1,i)])
+        if(!has_vertex(b2,*get_vertex(b1,i)) && !varRemoved[*get_vertex(b1,i)])
             return *get_vertex(b1,i);
     return -1;
 }

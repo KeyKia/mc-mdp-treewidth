@@ -29,6 +29,7 @@ typedef struct bag
 } bag;
 
 bool removed[MAXN];
+bool varRemoved[MAXN];
 
 void bag_init(bag *, int); //initializes the bag and its vectors
 void bag_add_kid(bag *, bag *); //adds kids to the bag
