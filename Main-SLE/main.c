@@ -7,7 +7,7 @@
  * In each equation, the index of the constant is -1
  * When entering an edge, user should specify the equations corresponding to that edge
  * There MUST be an edge between ALL pairs of vertices in each bag (even if they are together in 0 equations)
- * Variable indexes don't have to be sorted
+ * Variable indices don't have to be sorted
  * First bag MUST contain exactly one vertex
  */
 
@@ -18,7 +18,6 @@
 #include <math.h>
 #include "vector.h"
 #include "tree_decomposition.h"
-#include "gram_schmidt.h"
 #include "derive_independent_eqs.h"
 
 int eqCnt, varCnt; //number of equations and variables
@@ -29,7 +28,7 @@ vector e; //contains all possible edges of each bag (even with 0 prob)
 bag bags[MAXN]; //the bags
 int totV,totE; // vertices, edges
 int ansInd[MAXN]; // ansInd[v] is the index of the equation from which x_v shall be finally calculated
-int ansVal[MAXN]; // final solutions
+float ansVal[MAXN]; // final solutions
 vector removed_order;
 
 void input()
@@ -76,7 +75,7 @@ void input()
         }
 
         vector_add(&e, ej);
-        edge_print(ej);
+//        edge_print(ej);
     }
 
     /* read the tree decomposition of the primal graph */
@@ -265,7 +264,7 @@ void dfs(int curIndex,int parIndex)
 {
 
     int i;
-    bag_print(bags+curIndex);
+//    bag_print(bags+curIndex);
     for(i=0;i<(bags+curIndex)->kidCnt;i++)
     {
         int ind=get_kid(bags+curIndex,i)-bags;
@@ -277,6 +276,7 @@ void dfs(int curIndex,int parIndex)
         while(get_first_extra_vertex(bags+curIndex,bags+parIndex)!=-1)
         {
             int v=get_first_extra_vertex(bags+curIndex,bags+parIndex);
+            printf("Removing x_%d\n", v);
             remove_vertex(bags+curIndex,v);
         }
 }
@@ -287,43 +287,87 @@ void solve()
     memset(ansVal, -1, sizeof(ansVal));
     vector_init(&removed_order);
     dfs(0,-1);
+}
+
+void show_results()
+{
+    memset(ansVal, 0, sizeof(ansVal));
     int i,j,k;
+    float constantCoef=0, nonConstantCoef=0; int nonConstantVar = -1;
+
     for (i=0;i<eqCnt;i++)
         if (!removed[i])
         {
-
             for(j=0;j<vector_total(eqInd+i);j++)
             {
-                printf("%d %f\n",*(int *)vector_get(eqInd+i,j),*(float *)vector_get(eqCoef+i,j));
+//                printf("%d %f\n",*(int *)vector_get(eqInd+i,j),*(float *)vector_get(eqCoef+i,j));
+                if (*(int *)vector_get(eqInd+i,j)==-1)
+                    constantCoef=*(float *)vector_get(eqCoef+i,j);
+                else if (*(float *)vector_get(eqCoef+i,j)!=0)
+                {
+                    if (nonConstantCoef!=0)
+                        printf("Two variables with non-zero coefs: This shouldn't happen!\n");
+                    else
+                    {
+                        nonConstantCoef = *(float *) vector_get(eqCoef + i, j);
+                        nonConstantVar = *(int *)vector_get(eqInd+i,j);
+                    }
+                }
             }
-            printf("************\n");
+            printf("\n************\n");
         }
+
+    if (constantCoef==0 && nonConstantCoef==0)
+        printf("\nThe system has infinitely many solutions. Here is one:\n\n");
+    else if (constantCoef!=0 && nonConstantCoef==0)
+    {
+        printf("\nThe system has no solutions.\n\n");
+        return;
+    }
+    else
+    {
+        printf("\nThe system has one solution. Here it is:\n\n");
+        assert(nonConstantVar != -1);
+        ansVal[nonConstantVar] = -1 * constantCoef / nonConstantCoef;
+
+    }
+
+    // Calculate the solution in the reverse order of removing variables
     for (i=vector_total(&removed_order)-1; i>=0; i--)
     {
         int var=*(int *)vector_get(&removed_order, i);
         int ind=ansInd[var];
 
-        printf("\nCalculate x_%d from this equation:\n", var);
-        if (ind==-1)
-        {
-            printf("-1 -1 -1 ridiiiii\n");
-            continue;
-        }
+        float knowns=0, coef=0;
         for (j=0; j<vector_total(eqInd+ind); j++)
-            printf("%fx_%d ", *(float *)vector_get(eqCoef+ind, j), *(int *)vector_get(eqInd+ind, j));
+        {
+            int curVar=*(int *) vector_get(eqInd + ind, j);
+            float curCoef=*(float *) vector_get(eqCoef + ind, j);
 
+            if (curVar==var)
+            {
+                coef=curCoef;
+                continue;
+            }
+            if (curVar==-1)
+                knowns+=curCoef;
+            else
+                knowns+=curCoef*ansVal[curVar];
+        }
+        ansVal[var]=-1*knowns/coef;
     }
-}
 
-void show_results()
-{
-
+    // print the solution
+    for (i=0; i<varCnt; i++)
+        printf("x_%d = %f\n", i, ansVal[i]);
 }
 
 int main()
 {
+
     input();
     solve();
     show_results();
+
     return 0;
 }
