@@ -1,6 +1,9 @@
 import sys
 import json
 import random
+import numpy as np
+
+random.seed(30)
 
 """
 \<list of edges\>
@@ -59,49 +62,65 @@ with open(input_file) as f:
             successors = get_successors(lines[i+1].split(':')[1])
             vertices = [j+1 for j in range(n)]
             random.shuffle(vertices)
-            choose_vertices, probability_vertices = vertices[:len(vertices) / 2], vertices[len(vertices) / 2:]
 
-            out.write("Graph:\n")
-            out.write("Choose Vertices:\n")
-            out.write("Number of Vertices: %s\n" % len(choose_vertices))
-            out.write(' '.join(map(str, choose_vertices)) + "\n")
-            out.write("Probability Vertices:\n")
-            out.write("Number of Vertices: %s\n" % len(probability_vertices))
-            out.write(' '.join(map(str, probability_vertices)) + "\n")
-
-            choose_edges = []
-            probability_edges = []
+            edge_probs = np.zeros((n+1, n+1))
             for v in vertices:
-                if v in choose_vertices:
-                    for u in successors[v]:
-                        choose_edges.append((v, u))
-                else:
-                    probs = [random.random() for u in successors[v]]
-                    norm = sum(probs)
-                    for j, u in enumerate(successors[v]):
-                        probability_edges.append((v, u, probs[j] / norm))
+                probs = [random.random() for u in successors[v]]
+                norm = sum(probs)
+                for j, u in enumerate(successors[v]):
+                    edge_probs[v][u] = probs[j] / norm
 
-            out.write("Choose Edges:\n")
-            out.write("Number of Edges: %s\n" % len(choose_edges))
-            for edge in choose_edges:
-                out.write("%s %s\n" % edge)
-
-            out.write("Probability Edges:\n")
-            out.write("Number of Edges: %s\n" % len(probability_edges))
-            for edge in probability_edges:
-                out.write("%s %s %s\n" % edge)
-            out.write('\n')
-
+            edges = []
+            edge_indices = np.zeros((n+1, n+1), dtype=int)
+            edge_indices[:, :] = -1
             bags = get_bags(lines[i + 11])
-            tree = get_tree(lines[i + 9])
-
-            out.write("Tree:\n")
-            out.write("Vertices:\n")
-            out.write("Number of Vertices: %s\n" % len(bags))
+            bag_edges = []
             for bag in bags:
-                out.write(' '.join(map(str, bag)) + "\n")
-            out.write("Edges:\n")
+            	cur_bag_edges = []
+            	for v in bag:
+            		for u in bag:
+            			if edge_indices[v][u] == -1:
+            				edge_indices[v][u] = len(edges)
+            				edges.append((v, u, edge_probs[v][u]))
+            			cur_bag_edges.append(edge_indices[v][u])
+
+            target = n
+            out.write("%s %s %s\n\n" % (n, len(edges), target-1)) # totV, totE, target
+
+            for edge in edges:
+            	out.write("%s %s %s\n" % (edge[0]-1, edge[1]-1, edge[2])) # 0-based
+
+            out.write("\n%s\n\n" % (len(bags)+1)) # number of bags
+
+            first_tree_edge = ()
+            for j, bag in enumerate(bags):
+            	if target in bag and len(bag)>1:
+            		if bag[0] != target:
+            			other = bag[0]
+            		else:
+            			other = bag[1]
+            		out.write("2 4\n%s %s\n%s %s %s %s\n\n" % (target-1, other-1, edge_indices[target][target], 
+            			edge_indices[target][other], edge_indices[other][other], edge_indices[other][target]))
+            		first_tree_edge = (0, j+1)
+            		break
+
+            if len(first_tree_edge) == 0:
+            	out.write("1 1\n%s\n%s\n\n" % (target-1, edge_indices[target][target]))
+            	first_tree_edge = (0, 0)
+            
+            for bag in bags:
+            	out.write("%s %s\n" % (len(bag), len(bag)*len(bag)))
+            	out.write(' '.join(map(str, list(v-1 for v in bag))) + "\n")
+            	for u in bag:
+            		for v in bag:
+            			out.write("%s " % edge_indices[u][v])
+            	out.write("\n\n")
+
+            tree = get_tree(lines[i + 9])
+            out.write("%s %s\n" % first_tree_edge)
             for edge in tree:
                 out.write("%s %s\n" % edge)
+
+            
 
 
