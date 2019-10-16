@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "vector.h"
 #include "tree_decomposition.h"
 #include "derive_independent_eqs.h"
@@ -366,8 +367,12 @@ int main()
 {
 
     input();
+    clock_t begin = clock();
     solve();
+    clock_t end = clock();
     show_results();
+    float time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("\nTime spent: %f seconds\n", time_spent);
 
     return 0;
 }
