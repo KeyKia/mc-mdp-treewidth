@@ -4,7 +4,7 @@
 
 //TODO: input assumptions:
 /* Root is bag 0 and contains exactly two vertices including the target
- * Edges of the tdc are from parent (v) to child (u)
+ * Not anymore: Edges of the tdc are from parent (v) to child (u)
  * All possible edges of each bag are given in edges (even with 0 prob)
  * (and even all the loops - which might have 0 prob)
  * All edges are given in both directions (even with 0 prob)
@@ -14,38 +14,32 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <time.h>
 #include "vector.h"
 #include "tree_decomposition.h"
 
 vector e; //contains all possible edges of each bag (even with 0 prob)
-vector e_copy; //backup of e
 bag bags[MAXN]; //the bags
-bag bags_copy[MAXN]; //backup of the bags
 int totV,totE,target; // vertices, edges, and target in the Markov chain
 
-void input()
+bool input()
 {
 
-    FILE* fp=fopen("/home/kiarash/Desktop/rmc/rmc-treewidth-code/Main-MC/example.txt","r");
+    FILE* fp=fopen("/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmark/dacapobenchmark/outputs/eclipse_myformat/createInternalURLStreamHandler.txt","r");
     int i,j;
 
     //read totV
     fscanf(fp, "%d%d%d", &totV, &totE, &target);
 
     vector_init(&e);
-    vector_init(&e_copy);
     //get edges
     for(i=0;i<totE;i++)
     {
         edge *ej = malloc(sizeof(edge));
         fscanf(fp, "%d%d%f", &(ej->v), &(ej->u), &(ej->prob));
+        if (ej->v==target)
+            ej->prob=0.0; //remove edges leaving target -- causes no change in hitting probs
         vector_add(&e, ej);
-
-        edge *ej_copy = malloc(sizeof(edge));
-        ej_copy->v = ej->v;
-        ej_copy->u = ej->u;
-        ej_copy->prob = ej->prob;
-        vector_add(&e_copy,ej_copy);
     }
 
     // read vertices and edges within bags
@@ -54,9 +48,12 @@ void input()
     for(i=0;i<n;i++)
     {
         bag_init(bags+i,i);
-        bag_init(bags_copy+i,i);
         int V,E;
         fscanf(fp,"%d%d",&V,&E);
+        if(i==0 && V!=2){
+            printf("All hitting probabilities are zero (first/root bag has %d vertices\n", V);
+            return false;
+        }
 
         // read vertices within bag i
         for(j=0;j<V;j++)
@@ -64,11 +61,6 @@ void input()
             int *x=malloc(sizeof(int));
             fscanf(fp,"%d",x);
             bag_add_vertex(bags+i,x);
-
-            int *y=malloc(sizeof(int));
-            *y=*x;
-            bag_add_vertex(bags_copy+i,y);
-
         }
 
         // read edges within bag i
@@ -78,28 +70,22 @@ void input()
             fscanf(fp,"%d",&ind);
             edge *ej=vector_get(&e,ind);
             bag_add_edge(bags+i,ej);
-
-            edge *ej_copy=vector_get(&e_copy,ind);
-            bag_add_edge(bags_copy+i,ej_copy);
         }
     }
 
     //read the tree edges between bags
     // assumptions: root is bag 0 and contains the target
-    // and edges are from parent(v) to child(u)
+    // Not anymore: and edges are from parent(v) to child(u)
     for(i=0;i+1<n;i++)
     {
         int *v=malloc(sizeof(int)),*u=malloc(sizeof(int));
         fscanf(fp,"%d%d",v,u);
         bag_add_kid(bags+*v,bags+*u);
-
-        int *vt=malloc(sizeof(int)),*ut=malloc(sizeof(int));
-        *vt=*v;
-        *ut=*u;
-        bag_add_kid(bags_copy+*vt,bags_copy+*ut);
+        bag_add_kid(bags+*u,bags+*v);
     }
     fclose(fp);
 
+    return true;
 }
 
 
@@ -109,6 +95,8 @@ void input()
 */
 void dfs_up(int curIndex,int parIndex)
 {
+//    bag_print(bags+curIndex);
+//    fflush(stdout);
     int i;
     for(i=0;i<bags[curIndex].kidCnt;i++)
         if(get_kid(bags+curIndex,i)-bags!=parIndex)
@@ -132,17 +120,18 @@ void dfs_up(int curIndex,int parIndex)
 void dfs_down(int curIndex,int parIndex)
 {
     int i;
-    for(i=0;i<bags_copy[curIndex].kidCnt;i++)
+    for(i=0;i<bags[curIndex].kidCnt;i++)
     {
 
-        bag *tmp=get_kid(bags_copy+curIndex,i);
+        bag *tmp=get_kid(bags+curIndex,i);
         int kidIndex=tmp->id;
         if(kidIndex==parIndex)
             continue;
-        while(get_last_extra_vertex(get_kid(bags_copy+curIndex,i),bags_copy+curIndex)!=-1)
+        while(get_last_extra_vertex(get_kid(bags+curIndex,i),bags+curIndex)!=-1)
         {
-            int v=get_last_extra_vertex(get_kid(bags_copy+curIndex,i),bags_copy+curIndex);
-            return_vertex(get_kid(bags_copy+curIndex,i),v);
+            int v=get_last_extra_vertex(get_kid(bags+curIndex,i),bags+curIndex);
+            printf("returning vertex %d from bag %d\n", v, get_kid(bags+curIndex,i)->id);
+            return_vertex(get_kid(bags+curIndex,i),v);
         }
 
         dfs_down(kidIndex,curIndex);
@@ -160,6 +149,7 @@ void solve()
     init_res(bags,target);
     memset(removed,0,sizeof(removed));
     dfs_down(0,-1);
+    printf("\ndfs_down finished.\n-------------------------------\n\n");
 }
 
 void show_results()
@@ -171,8 +161,15 @@ void show_results()
 
 int main()
 {
-    input();
+    bool done = input();
+    if (!done)
+        return 0;
+    clock_t begin = clock();
     solve();
+    clock_t end = clock();
     show_results();
+    float time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("\nTime spent: %f seconds\n", time_spent);
+
     return 0;
 }

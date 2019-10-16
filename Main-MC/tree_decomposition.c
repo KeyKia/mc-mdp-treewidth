@@ -133,7 +133,7 @@ void remove_vertex(bag *b,int v)
     for (i=0;i<b->verCnt;i++)
         for (j=0;j<b->verCnt;j++)
         {
-            if(i==vIndex || j==vIndex)
+            if(removed[*get_vertex(b, i)] || removed[*get_vertex(b, j)])
                 continue;
             edge *in=b->edges[i][vIndex];
             edge *out=b->edges[vIndex][j];
@@ -185,6 +185,8 @@ void return_vertex(bag *b, int v)
         if(i==vIndex)
             continue;
         else
+        {
             res[v]+=res[*get_vertex(b,i)]*b->edges[vIndex][i]->prob;
+        }
     }
 }
