@@ -110,12 +110,13 @@ void input()
 
     // read the tree edges between bags
     // assumptions: root is bag 0 and contains the target
-    // and edges are from parent(v) to child(u)
+    // TODO: not any more: and edges are from parent(v) to child(u)
     for(i=0;i+1<n;i++)
     {
         int *v=malloc(sizeof(int)),*u=malloc(sizeof(int));
         fscanf(fp,"%d%d",v,u);
         bag_add_kid(bags+*v,bags+*u);
+        bag_add_kid(bags+*u,bags+*v);
     }
     fclose(fp);
 
