@@ -2,13 +2,13 @@
 // Created by kiarash on 9/25/19.
 //
 
-#ifndef RMC_TREEWIDTH_CODE_TREE_DECOMPOSITION_H
-#define RMC_TREEWIDTH_CODE_TREE_DECOMPOSITION_H
+#ifndef RMC_TREEWIDTH_CODE_SLE_TREEDEC_H
+#define RMC_TREEWIDTH_CODE_SLE_TREEDEC_H
 
 #define MAX_TREEWIDTH 10
 #define MAXN 1000100
 
-#include "vector.h"
+#include "../utils/vector.h"
 #include <stdbool.h>
 
 typedef struct edge
@@ -45,4 +45,4 @@ int get_last_extra_vertex(bag *, bag *);  //returns the last vertex in first bag
 void init_res(bag *,int); //initializes the final hitting probs for the root bag (used once after dfs_up)
 void edge_print(edge *);
 
-#endif //RMC_TREEWIDTH_CODE_TREE_DECOMPOSITION_H
+#endif //RMC_TREEWIDTH_CODE_SLE_TREEDEC_H

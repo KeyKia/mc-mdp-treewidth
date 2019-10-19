@@ -8,8 +8,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "vector.h"
-#include "tree_decomposition.h"
+#include "../utils/vector.h"
+#include "sle_treedec.h"
 #include "gaussian_elimination.h"
 
 extern vector eqInd[MAXN],eqCoef[MAXN];

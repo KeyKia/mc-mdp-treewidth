@@ -17,8 +17,8 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-#include "vector.h"
-#include "tree_decomposition.h"
+#include "../utils/vector.h"
+#include "sle_treedec.h"
 #include "derive_independent_eqs.h"
 
 int eqCnt, varCnt; //number of equations and variables

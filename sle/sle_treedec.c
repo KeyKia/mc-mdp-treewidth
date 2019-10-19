@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "tree_decomposition.h"
+#include "sle_treedec.h"
 
 
 void bag_init(bag *b, int id)
