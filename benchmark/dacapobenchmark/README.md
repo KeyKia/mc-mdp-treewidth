@@ -19,6 +19,6 @@ Number of Edges: \<int\>
 Tree:  
 Vertices:  
 Number of Vertices: \<int\>  
-\<list of bags\>  
+\<list of mcBags\>
 Edges:  
 \<list of edges\>  

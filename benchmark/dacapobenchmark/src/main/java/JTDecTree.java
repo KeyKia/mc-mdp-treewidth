@@ -3,7 +3,7 @@
  * Note: some functions allow you to change the data so that it does not correspond to a real tree, in this case many operations are not
  * well-defined and will cause undefined behavior and/or different sorts of exceptions
  * Note 2: For the global numbers (height, root, maxWidth, etc.) to work, you need to run a traverseTree first. All processes update these automatically
- * except for the local changes, i.e. addVertex, addToBag, changeParent.
+ * except for the local changes, i.mcE. addVertex, addToBag, changeParent.
  * Please send suggestions and bug reports to goharshady@ist.ac.at
  */
 
@@ -18,10 +18,10 @@ public class JTDecTree {
 	int maxNode; //the maximum integer that has been used to label a vertex of this tree
 	int root; //the root, if well-defined
 	int height; //height of the tree, well-defined only if connected
-	int maxWidth; //maximum width among all bags
+	int maxWidth; //maximum width among all mcBags
 	HashMap<Integer,Integer> parent; //parents of nodes
 	HashMap<Integer,HashSet<Integer>> children; //children of nodes
-	HashMap<Integer,HashSet<Integer>> bag; //bags
+	HashMap<Integer,HashSet<Integer>> bag; //mcBags
 	HashMap<Integer,Integer> rootBag; //rootBags of nodes of the original graph G
 	HashMap<Integer,Integer> level; //levels of vertices in the tree
 	void fillWithNull() //initializes everything to null
@@ -86,7 +86,7 @@ public class JTDecTree {
 		ans = ans
 				+"children: "+children.toString()+"\n";
 		ans = ans
-				+"bags: "+bag.toString()+"\n";
+				+"mcBags: "+bag.toString()+"\n";
 		ans = ans
 				+"rootBags: "+rootBag.toString()+"\n";
 		ans = ans

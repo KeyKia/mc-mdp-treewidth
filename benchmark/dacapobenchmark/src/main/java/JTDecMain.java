@@ -102,12 +102,12 @@ public class JTDecMain extends SceneTransformer{
 
 		try {
 			run();
-		} catch (IOException e) {
+		} catch (IOException mcE) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+			mcE.printStackTrace();
+		} catch (InterruptedException mcE) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			mcE.printStackTrace();
 		}
 		
 		
