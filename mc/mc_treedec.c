@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "tree_decomposition.h"
+#include "mc_treedec.h"
 
 
 void bag_init(bag *b, int id)
@@ -60,7 +60,7 @@ float get_edge_prob(bag *b,int v,int u)
     v=get_vertex_index(b,v);
     u=get_vertex_index(b,u);
     assert(v==-1 || u==-1);
-    return b->edges[v][u]->prob;
+    return b->edges[v][u]->delta;
 }
 
 bag *get_kid(bag *b,int ind)
@@ -83,7 +83,7 @@ void bag_print(bag *b)
             if (b->edges[i][j]==NULL)
                 printf("0.0 ");
             else
-                printf("%f ", b->edges[i][j]->prob);
+                printf("%f ", b->edges[i][j]->delta);
         printf("\n");
     }
     printf("kids:");
@@ -105,7 +105,7 @@ int get_first_extra_vertex(bag *b1, bag *b2)
 {
     int i;
     for(i=0;i<b1->verCnt;i++)
-        if(!has_vertex(b2,*get_vertex(b1,i)) && !removed[*get_vertex(b1,i)])
+        if(!has_vertex(b2,*get_vertex(b1,i)) && !mcRemoved[*get_vertex(b1,i)])
             return *get_vertex(b1,i);
     return -1;
 }
@@ -114,79 +114,12 @@ int get_last_extra_vertex(bag *b1, bag *b2)
 {
     int i;
     for(i=b1->verCnt-1;i>=0;i--)
-        if(!has_vertex(b2,*get_vertex(b1,i)) && !removed[*get_vertex(b1,i)])
+        if(!has_vertex(b2,*get_vertex(b1,i)) && !mcReturned[*get_vertex(b1,i)])
             return *get_vertex(b1,i);
     return -1;
 }
 
-void remove_vertex(bag *b,int v)
-{
-    assert(!removed[v]);
-    removed[v]=true;
-    int vIndex=get_vertex_index(b,v);
-    printf("\nremoving: %d\n",v);
-    int i, j;
-    /*
-     * removes vertex v and updates the prob of edges between
-     * its neighbors (including the self-loops).
-     */
-    for (i=0;i<b->verCnt;i++)
-        for (j=0;j<b->verCnt;j++)
-        {
-            if(removed[*get_vertex(b, i)] || removed[*get_vertex(b, j)])
-                continue;
-            edge *in=b->edges[i][vIndex];
-            edge *out=b->edges[vIndex][j];
-            edge *connection=b->edges[i][j];
-
-            connection->prob+=in->prob*out->prob;
-            print_edge(connection);
-        }
-}
-
 void print_edge(edge *e)
 {
-    printf("connecting edge: from %d to %d with %f\n",e->v,e->u,e->prob);
-}
-
-void init_res(bag *b,int target)
-{
-    int ind=get_vertex_index(b,target),v;
-    res[target]=1;
-    if(ind==0)
-    {
-        v = *get_vertex(b, 1);
-        /*
-         * finding the sum limit of the geometric sequence caused
-         * by the self-loop of the non-target vertex
-        */
-        res[v]=b->edges[1][0]->prob/(1-b->edges[1][1]->prob);
-    }
-    else
-    {
-        v = *get_vertex(b, 0);
-
-        /*
-         * finding the sum limit of the geometric sequence caused
-         * by the self-loop of the non-target vertex
-        */
-        res[v]=b->edges[0][1]->prob/(1-b->edges[0][0]->prob);;
-    }
-}
-
-void return_vertex(bag *b, int v)
-{
-    assert(!removed[v]);
-    removed[v]=true;
-    int vIndex=get_vertex_index(b,v);
-    int i;
-    for(i=0;i<b->verCnt;i++)
-    {
-        if(i==vIndex)
-            continue;
-        else
-        {
-            res[v]+=res[*get_vertex(b,i)]*b->edges[vIndex][i]->prob;
-        }
-    }
+    printf("connecting edge: from %d to %d with %f\n",e->v,e->u,e->delta);
 }
