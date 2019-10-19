@@ -35,7 +35,7 @@ vector removed_order;
 void input()
 {
 
-    FILE *fp = fopen("/home/kiarash/Desktop/rmc/rmc-treewidth-code/Main-SLE/example.txt", "r");
+    FILE *fp = fopen("/home/kiarash/Desktop/rmc/rmc-treewidth-code/sle/example.txt", "r");
     int i, j;
 
     /* read the equations */
