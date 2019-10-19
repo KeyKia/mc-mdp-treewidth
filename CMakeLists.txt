@@ -3,5 +3,5 @@ project(rmc-treewidth-code C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(rmc-treewidth-code-mc Main-MC/main.c Main-MC/vector.h Main-MC/vector.c Main-MC/tree_decomposition.c Main-MC/tree_decomposition.h)
-add_executable(rmc-treewidth-code-sle Main-SLE/main.c Main-SLE/vector.h Main-SLE/vector.c Main-SLE/tree_decomposition.c Main-SLE/tree_decomposition.h Main-SLE/derive_independent_eqs.h Main-SLE/gaussian_elimination.h)
+add_executable(mc mc/mc_main.c utils/vector.h utils/vector.c mc/mc_treedec.c mc/mc_treedec.h mc/mc_solve.h)
+add_executable(sle utils/vector.h utils/vector.c sle/sle_main.c sle/sle_treedec.c sle/sle_treedec.h sle/derive_independent_eqs.h sle/gaussian_elimination.h)
