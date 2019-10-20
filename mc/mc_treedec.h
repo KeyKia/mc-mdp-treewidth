@@ -5,8 +5,8 @@
 #ifndef RMC_TREEWIDTH_CODE_MC_TREEDEC_H
 #define RMC_TREEWIDTH_CODE_MC_TREEDEC_H
 
-#define MAX_TREEWIDTH 20
-#define MAXN 100010
+#define MAX_TREEWIDTH 40
+#define MAXN 2010
 
 #include "../utils/vector.h"
 #include <stdbool.h>
@@ -32,6 +32,7 @@ bool mcRemoved[MAXN];
 bool mcReturned[MAXN];
 
 void bag_init(bag *, int); //initializes the bag and its vectors
+void bag_free(bag *); //free the vectors of the given bag
 void bag_add_kid(bag *, bag *); //adds kids to the bag
 void bag_add_vertex(bag *, int *); //adds vertex within the bag
 void bag_add_edge(bag *, edge *); //add edges within bag vertices

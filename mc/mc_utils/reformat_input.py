@@ -94,19 +94,10 @@ with open(input_file) as f:
 
             first_tree_edge = ()
             for j, bag in enumerate(bags):
-                if target in bag and len(bag)>1:
-                    if bag[0] != target:
-                        other = bag[0]
-                    else:
-                        other = bag[1]
-                    out.write("2 4\n%s %s\n%s %s %s %s\n\n" % (target-1, other-1, edge_indices[target][target],
-                                                               edge_indices[target][other], edge_indices[other][other], edge_indices[other][target]))
+                if target in bag:
+                    out.write("1 1\n%s\n%s\n\n" % (target-1, edge_indices[target][target]))
                     first_tree_edge = (0, j+1)
                     break
-
-            if len(first_tree_edge) == 0:
-                out.write("1 1\n%s\n%s\n\n" % (target-1, edge_indices[target][target]))
-                first_tree_edge = (0, 0)
 
             for bag in bags:
                 out.write("%s %s\n" % (len(bag), len(bag)*len(bag)))
@@ -120,7 +111,3 @@ with open(input_file) as f:
             out.write("%s %s\n" % first_tree_edge)
             for edge in tree:
                 out.write("%s %s\n" % edge)
-
-
-
-

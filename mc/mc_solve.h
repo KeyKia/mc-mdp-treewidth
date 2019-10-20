@@ -52,7 +52,7 @@ void remove_vertices(int curIndex, int parIndex)
         while (get_first_extra_vertex(b, mcBags + parIndex) != -1)
         {
             int u = get_first_extra_vertex(b, mcBags + parIndex);
-            printf("\nremoving: %d\n", u);
+//            printf("\nremoving: %d\n", u);
             assert(!mcRemoved[u]);
             mcRemoved[u] = true;
 
@@ -78,7 +78,7 @@ void remove_vertices(int curIndex, int parIndex)
                     edge *out = b->edges[uIndex][j];
                     edge *connection = b->edges[i][j];
                     connection->delta += in->delta * out->delta;
-                    print_edge(connection);
+//                    print_edge(connection);
                 }
         }
     }
@@ -104,7 +104,7 @@ void return_vertices(int curIndex, int parIndex)
         while (get_last_extra_vertex(kid, b) != -1)
         {
             int u = get_last_extra_vertex(kid, b);
-            printf("returning vertex %d from bag %d\n", u, get_kid(mcBags + curIndex, i)->id);
+//            printf("returning vertex %d from bag %d\n", u, get_kid(mcBags + curIndex, i)->id);
 
             assert(!mcReturned[u]);
             mcReturned[u] = true;
@@ -128,9 +128,9 @@ void return_vertices(int curIndex, int parIndex)
 }
 
 
-void solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, int target, float res[])
+float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, int target, float res[])
 {
-    // TODO: either new them here or in source (e.g. mcE is not uses)
+    // TODO: either new them here or in source (e.g. mcE is not used)
     mcBagsNum = bagsNum;
     int i;
     for (i=0; i<mcBagsNum; i++)
@@ -142,16 +142,21 @@ void solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, int target,
     memset(mcRemoved, 0, sizeof(mcRemoved));
     memset(mcReturned, 0, sizeof(mcReturned));
 
+    clock_t begin = clock();
+
     remove_vertices(0, -1);
-    printf("\n-------------------------------\n\n");
+//    printf("\n-------------------------------\n\n");
 
     mcHitPr[mcTarget] = 1.;
     return_vertices(0, -1);
-    printf("\n-------------------------------\n\n");
+//    printf("\n-------------------------------\n\n");
+
+    clock_t end = clock();
 
     for (i=0; i<totV; i++)
         res[i] = mcHitPr[i];
 
+    return (float) (end - begin) / CLOCKS_PER_SEC;
 }
 
 #endif //RMC_TREEWIDTH_CODE_MC_SOLVE_H

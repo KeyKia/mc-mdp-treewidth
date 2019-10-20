@@ -2,19 +2,20 @@
 // Created by kiarash on 9/24/19.
 //
 
+#include <dirent.h>
+#include <string.h>
 #include "../utils/vector.h"
 #include "mc_solve.h"
 
-vector e; //contains all possible edges of each bag (even with 0 delta)
-bag bags[MAXN]; //the bags
-int totV, totE, target, bagsNum; // vertices, edges, and mcTarget in the Markov chain
+bag bags[MAXN];
+vector e;
+int totV, totE, target, bagsNum;
+float res[MAXN];
 
-void input()
+void input(char file_path[])
 {
+    FILE *fp = fopen(file_path, "r");
 
-    FILE *fp = fopen(
-            "/home/kiarash/Desktop/rmc/rmc-treewidth-code/mc/example.txt",
-            "r");
     int i, j;
 
     //read mcTotV
@@ -67,24 +68,41 @@ void input()
         bag_add_kid(bags + *v, bags + *u);
         bag_add_kid(bags + *u, bags + *v);
     }
-    fclose(fp);
 
+    fclose(fp);
 }
 
 
 int main()
 {
-    input();
-    float res[MAXN];
 
-    clock_t begin = clock();
-    solve_mc(bags, bagsNum, e, totV, totE, target, res);
-    clock_t end = clock();
+    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/asm-3.1_mcprob_format/";
+    struct dirent *de;  // Pointer for directory entry
+    DIR *dr = opendir(dir_path);
+    if (dr == NULL)
+    {
+        printf("Could not open current directory" );
+        return 0;
+    }
 
-    float time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
-    int i;
-    for (i = 0; i < totV; i++)
-        printf("Hitting prob of vertex %d: %f\n", i, res[i]);
+    float time_spent = 0.;
+    while ((de = readdir(dr)) != NULL)
+    {
+        if (de->d_name[0] == '.')
+            continue;
+        char file_path[256];
+        strcpy(file_path, dir_path);
+        strcat(file_path, de->d_name);
+
+        memset(res, 0, sizeof(res));
+
+        input(file_path);
+        time_spent += solve_mc(bags, bagsNum, e, totV, totE, target, res);
+
+//        int i;
+//        for (i = 0; i < totV; i++)
+//            printf("Hitting prob of vertex %d: %f\n", i, res[i]);
+    }
     printf("\nTime spent: %f seconds\n", time_spent);
 
     return 0;

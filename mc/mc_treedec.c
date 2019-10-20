@@ -21,6 +21,19 @@ void bag_init(bag *b, int id)
             b->edges[i][j]=NULL;
 }
 
+void bag_free(bag *b)
+{
+    b->verCnt=0;
+    b->kidCnt=0;
+    b->id = -1;
+    vector_free(&(b->kids));
+    vector_free(&(b->vertices));
+    int i, j;
+    for (i=0;i<MAX_TREEWIDTH;i++)
+        for (j=0;j<MAX_TREEWIDTH;j++)
+            b->edges[i][j]=NULL;
+}
+
 void bag_add_kid(bag *b, bag *kid)
 {
     vector_add(&(b->kids), kid);
