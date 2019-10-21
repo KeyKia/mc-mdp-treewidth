@@ -1,0 +1,67 @@
+Graph:
+Choose Vertices:
+Number of Vertices: 8
+6 9 12 15 5 13 11 17
+Probability Vertices:
+Number of Vertices: 9
+10 4 7 16 3 14 1 8 2
+Choose Edges:
+Number of Edges: 8
+6 7
+12 13
+12 14
+15 16
+15 17
+5 6
+13 14
+11 12
+Probability Edges:
+Number of Edges: 10
+10 11 1.0
+4 5 0.607761182478
+4 2 0.392238817522
+7 8 1.0
+3 4 1.0
+14 15 1.0
+1 2 1.0
+8 9 0.758336993773
+8 10 0.241663006227
+2 3 1.0
+
+Tree:
+Vertices:
+Number of Vertices: 17
+17
+16 17
+16 17 15
+14 15
+12 14
+12 13 14
+11 12
+10 11
+8 10
+8 9
+7 8
+6 7
+5 6
+4 5
+2 4
+2 3 4
+1 2
+Edges:
+2 1
+3 2
+4 3
+5 4
+6 5
+7 5
+8 7
+9 8
+10 9
+11 9
+12 11
+13 12
+14 13
+15 14
+16 15
+17 15
