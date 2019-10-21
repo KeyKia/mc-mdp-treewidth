@@ -88,8 +88,8 @@ with open(input_file) as f:
 
             target = random.randint(1, n)
             out.write("%s %s %s %s\n\n" % (len(choose_vertices), len(probability_vertices), len(edges), target-1)) # totV, totE, target
-            out.write("\n" + ' '.join(map(str, choose_vertices)) + "\n")
-            out.write("\n" + ' '.join(map(str, probability_vertices)) + "\n\n")
+            out.write("\n" + ' '.join(map(str, [v-1 for v in choose_vertices])) + "\n")
+            out.write("\n" + ' '.join(map(str, [v-1 for v in probability_vertices])) + "\n\n")
 
             for edge in edges:
             	if edge[0] in choose_vertices and edge[1] in successors[edge[0]]:
