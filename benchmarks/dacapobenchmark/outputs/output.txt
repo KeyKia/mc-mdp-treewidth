@@ -1,3 +1,0 @@
-Soot started on Mon Oct 21 02:38:19 IRST 2019
-Soot finished on Mon Oct 21 02:38:58 IRST 2019
-Soot has run for 0 min. 39 sec.
