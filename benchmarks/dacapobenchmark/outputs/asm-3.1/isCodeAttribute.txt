@@ -13,6 +13,8 @@ Number of Edges: 1
 
 Tree:
 Vertices:
-Number of Vertices: 1
+Number of Vertices: 2
+2
 1 2
 Edges:
+2 1

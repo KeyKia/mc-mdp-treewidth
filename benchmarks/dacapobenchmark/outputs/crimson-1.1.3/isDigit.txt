@@ -1,40 +1,44 @@
 Graph:
 Choose Vertices:
 Number of Vertices: 4
-5 6 7 9
+6 3 9 4
 Probability Vertices:
 Number of Vertices: 5
-1 8 4 3 2
+1 5 8 7 2
 Choose Edges:
-Number of Edges: 4
-5 6
-5 8
+Number of Edges: 5
 6 7
-7 9
+3 4
+3 8
+4 5
+4 6
 Probability Edges:
-Number of Edges: 7
+Number of Edges: 6
 1 2 1.0
+5 6 0.708286037713
+5 8 0.291713962287
 8 9 1.0
-4 5 0.443804668634
-4 6 0.556195331366
-3 4 0.577314665761
-3 8 0.422685334239
+7 9 1.0
 2 3 1.0
 
 Tree:
 Vertices:
-Number of Vertices: 7
-2 3 5 6 7 8 9
-1 2 3 4 5 6 8
-1 2 3
-2 3 4 5 6 8
-5 6 7 8 9
-6 7 8 9
+Number of Vertices: 9
+9
+8 9
 7 8 9
+6 7 8
+5 6 8
+4 5 6 8
+3 4 8
+2 3
+1 2
 Edges:
 2 1
 3 2
-4 2
-5 1
+4 3
+5 4
 6 5
-7 5
+7 6
+8 7
+9 8
