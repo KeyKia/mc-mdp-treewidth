@@ -33,12 +33,12 @@ void bag_add_vertex(bag *b, int *v)
     b->verCnt++;
 }
 
-void bag_add_edge(bag *b, edge *e)
+void bag_add_edge(bag *b, edge *ejj)
 {
-    int v=get_vertex_index(b,e->v);
-    int u=get_vertex_index(b,e->u);
-    b->edges[v][u]=e;
-    b->edges[u][v]=e;
+    int v=get_vertex_index(b,ejj->v);
+    int u=get_vertex_index(b,ejj->u);
+    b->edges[v][u]=ejj;
+    b->edges[u][v]=ejj;
 }
 
 int get_vertex_index(bag *b,int v)
@@ -113,12 +113,12 @@ int get_last_extra_vertex(bag *b1, bag *b2)
     return -1;
 }
 
-void edge_print(edge *e)
+void edge_print(edge *ejj)
 {
-    printf("edge: from %d to %d in: ",e->v,e->u);
+    printf("edge: from %d to %d in: ",ejj->v,ejj->u);
     int i;
-    for(i=0;i<vector_total(&(e->eqs));i++)
-        printf("%d ",*(int *)vector_get(&(e->eqs),i));
+    for(i=0;i<vector_total(&(ejj->eqs));i++)
+        printf("%d ",*(int *)vector_get(&(ejj->eqs),i));
     printf("\n");
 }
 
