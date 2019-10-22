@@ -2,8 +2,8 @@
 // Created by kiarash on 10/19/19.
 //
 
-#ifndef RMC_TREEWIDTH_CODE_MC_SOLVE_H
-#define RMC_TREEWIDTH_CODE_MC_SOLVE_H
+#ifndef RMC_TREEWIDTH_CODE_MC_HITPROB_SOLVE_H
+#define RMC_TREEWIDTH_CODE_MC_HITPROB_SOLVE_H
 
 //TODO: input assumptions:
 /* Root is bag 0 and contains ONLY the mcTarget
@@ -18,8 +18,8 @@
 #include <assert.h>
 #include <string.h>
 #include <time.h>
-#include "../utils/vector.h"
-#include "mc_treedec.h"
+#include "../../utils/vector.h"
+#include "../mc_treedec.h"
 
 vector mcE; //contains all possible edges of each bag (even with 0 delta)
 bag mcBags[MAXN]; //the bags
@@ -28,7 +28,7 @@ float mcHitPr[MAXN];
 
 /*
  * remove_vertices() removes all vertices one by one, while keeping the Hitting
- * Probabilities of the remaining part unchanged. After all vertices are mcRemoved,
+ * Probabilities of the remaining part unchanged. After all vertices are removed,
  * return_vertices() returns them one by one and computes the HitProbs.
 */
 void remove_vertices(int curIndex, int parIndex)
@@ -89,7 +89,7 @@ void remove_vertices(int curIndex, int parIndex)
  * Starting from root which has only two vertices (including
  * mcTarget), returns all vertices in each bag in the reversed
  * order they were mcRemoved in remove_vertices. While returning computes
- * the correct hitting probability of the mcReturned vertex
+ * the correct hitting probability of the returned vertex
  */
 void return_vertices(int curIndex, int parIndex)
 {
@@ -159,4 +159,4 @@ float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, int target
     return (float) (end - begin) / CLOCKS_PER_SEC;
 }
 
-#endif //RMC_TREEWIDTH_CODE_MC_SOLVE_H
+#endif //RMC_TREEWIDTH_CODE_MC_HITPROB_SOLVE_H

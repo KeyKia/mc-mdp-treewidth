@@ -15,7 +15,7 @@
 typedef struct edge
 {
     int v, u;
-    float delta;
+    float delta, reward;
 } edge;
 
 typedef struct bag

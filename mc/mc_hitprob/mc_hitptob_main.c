@@ -4,8 +4,8 @@
 
 #include <dirent.h>
 #include <string.h>
-#include "../utils/vector.h"
-#include "mc_solve.h"
+#include "../../utils/vector.h"
+#include "mc_hitprob_solve.h"
 
 bag bags[MAXN];
 vector e;
