@@ -84,7 +84,7 @@ with open(input_file) as f:
                             edges.append((v, u, edge_probs[v][u]))
                         cur_bag_edges.append(edge_indices[v][u])
 
-            target = n
+            target = random.randint(1, n)
             out.write("%s %s %s\n\n" % (n, len(edges), target-1)) # totV, totE, target
 
             for edge in edges:
