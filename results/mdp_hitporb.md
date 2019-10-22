@@ -6,7 +6,7 @@ Execution times in milli-seconds:
 | DaCapo-eclipse |    175.424    |                |
 | DaCapo-asm_3.1 |     19.253    |                |
 
-Mean number of iterations:
+Mean number of iterations for policy iteration:
 
 |                |  our method   |   MATLAB MDP Toolbox  |
 |:--------------:|:-------------:|:---------------------:|
