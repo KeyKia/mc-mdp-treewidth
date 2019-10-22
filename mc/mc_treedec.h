@@ -7,6 +7,7 @@
 
 #define MAX_TREEWIDTH 40
 #define MAXN 2010
+#define EPSILON 1e-6
 
 #include "../utils/vector.h"
 #include <stdbool.h>
