@@ -110,7 +110,7 @@ void input(char file_path[], bag* bags, vector *e, vector *choices, vector *choo
 int main()
 {
 
-    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/eclipse_mdpprob/";
+    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/asm-3.1_mdpprob/";
     struct dirent *de;  // Pointer for directory entry
     DIR *dr = opendir(dir_path);
     if (dr == NULL)
@@ -124,12 +124,7 @@ int main()
     {
         if (de->d_name[0] == '.')
             continue;
-//        if (de->d_name[0] == 'f' && de->d_name[4] == 'L' && de->d_name[9] == 'R' && de->d_name[17] == 'I')
-//        {
-//            printf("tadaaaaaaaaaaaaaaaaa\n");
-//            continue;
-//        }
-        printf("%s\n",de->d_name);
+//        printf("%s\n",de->d_name);
         num_mdps++;
         char file_path[256];
         strcpy(file_path, dir_path);
@@ -176,12 +171,12 @@ int main()
                 choice->delta = 0.;
 
                 // update the policy according to computed Hit Probs
-                int newChoiceID = -1;
-                float maxProb = -1.;
+                int newChoiceID = policy[*v];
+                float maxProb = hitPr[((edge *)vector_get(choices + *v, policy[*v]))->u];
                 for (j = 0; j < vector_total(choices + *v); j++)
                 {
                     edge *cur = vector_get(choices + *v, j);
-                    if (hitPr[cur->u] > maxProb)
+                    if (hitPr[cur->u] - maxProb > EPSILON)
                     {
                         maxProb = hitPr[cur->u];
                         newChoiceID = j;
@@ -189,18 +184,11 @@ int main()
                 }
                 assert(newChoiceID != -1);
                 if (newChoiceID != policy[*v])
-                {
                     done = 0;
-                    if (de->d_name[0] == 'f' && de->d_name[4] == 'L' && de->d_name[9] == 'R' && de->d_name[17] == 'I')
-                    {
-                        printf("policy updated for vertex %d from %d to %d\n", *v, ((edge *)vector_get(choices + *v, policy[*v]))->u,
-                               ((edge *)vector_get(choices + *v, newChoiceID))->u);
-                    }
-                }
                 policy[*v] = newChoiceID;
             }
             iter++;
-            printf("iteration %d\n", iter);
+
             clock_t end = clock();
             time_spent += (float) (end - begin) / CLOCKS_PER_SEC;
 
