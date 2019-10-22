@@ -12,7 +12,7 @@
 #include <dirent.h>
 #include <string.h>
 #include "../utils/vector.h"
-#include "../mc/mc_solve.h"
+#include "../mc/mc_hitprob/mc_hitprob_solve.h"
 
 //bag bags[MAXN];
 //vector e;
