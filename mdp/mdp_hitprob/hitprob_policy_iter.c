@@ -2,8 +2,7 @@
 // Created by kiarash on 10/20/19.
 //
 
-/*
- * TODO: input assumptions:
+/* Input:
  * The only difference with MC is that we fist read choose and prob vertices,
  * and there is a flag for each edge determining whether it is a choose edge or not ("or not" != prob)
  * Choose edges have 0 prob in input (just to be consistent with prob edges)
@@ -11,8 +10,8 @@
 
 #include <dirent.h>
 #include <string.h>
-#include "../utils/vector.h"
-#include "../mc/mc_hitprob/mc_hitprob_solve.h"
+#include "../../utils/vector.h"
+#include "../../mc/mc_hitprob/mc_hitprob_solve.h"
 
 //bag bags[MAXN];
 //vector e;
@@ -172,7 +171,7 @@ int main()
 
                 // update the policy according to computed Hit Probs
                 int newChoiceID = policy[*v];
-                float maxProb = hitPr[((edge *)vector_get(choices + *v, policy[*v]))->u];
+                float maxProb = hitPr[choice->u];
                 for (j = 0; j < vector_total(choices + *v); j++)
                 {
                     edge *cur = vector_get(choices + *v, j);
