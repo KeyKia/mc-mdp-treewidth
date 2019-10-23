@@ -5,12 +5,12 @@
 #include <dirent.h>
 #include <string.h>
 #include "../../utils/vector.h"
-#include "mc_expsum_solve.h"
+#include "mc_discsum_solve.h"
 
 bag bags[MAXN];
 vector e;
 int totV, totE, bagsNum;
-float expSum[MAXN], lambda;
+float discSum[MAXN], lambda;
 
 void input(char file_path[])
 {
@@ -74,12 +74,12 @@ void input(char file_path[])
 int main()
 {
 
-    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/asm-3.1_mcprob/";
+    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mc_discsum/asm-3.1/";
     struct dirent *de;  // Pointer for directory entry
     DIR *dr = opendir(dir_path);
     if (dr == NULL)
     {
-        printf("Could not open current directory" );
+        printf("Could not open current directory");
         return 0;
     }
 
@@ -88,19 +88,20 @@ int main()
     {
         if (de->d_name[0] == '.')
             continue;
-        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/mc/mc_expsum/example.txt";
-//        strcpy(file_path, dir_path);
-//        strcat(file_path, de->d_name);
+//        printf("%s\n", de->d_name);
+//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mc_discsum/asm-3.1/a.txt";
+        char file_path[256];
+        strcpy(file_path, dir_path);
+        strcat(file_path, de->d_name);
 
-        memset(expSum, 0, sizeof(expSum));
+        memset(discSum, 0, sizeof(discSum));
 
         input(file_path);
-        time_spent += solve_mc(bags, bagsNum, e, totV, totE, lambda, expSum);
+        time_spent += solve_mc(bags, bagsNum, e, totV, totE, lambda, discSum);
 
-        int i;
-        for (i = 0; i < totV; i++)
-            printf("Expected sum of vertex %d: %f\n", i, expSum[i]);
-        break;
+//        int i;
+//        for (i = 0; i <= totV; i++)
+//            printf("Expected discounted sum of vertex %d: %f\n", i, discSum[i]);
     }
     printf("\nTime spent: %f seconds\n", time_spent);
 

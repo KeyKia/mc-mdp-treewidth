@@ -2,8 +2,8 @@
 // Created by kiarash on 10/22/19.
 //
 
-#ifndef RMC_TREEWIDTH_CODE_MC_EXPSUM_SOLVE_H
-#define RMC_TREEWIDTH_CODE_MC_EXPSUM_SOLVE_H
+#ifndef RMC_TREEWIDTH_CODE_MC_DISCSUM_SOLVE_H
+#define RMC_TREEWIDTH_CODE_MC_DISCSUM_SOLVE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +18,7 @@
 vector mcE; //contains all possible edges of each bag (even with 0 delta)
 bag mcBags[MAXN]; //the bags
 int mcTotV, mcTotE, mcOneHat, mcBagsNum; // vertices, edges, and mcTarget in the Markov chain
-float mcExpSum[MAXN], mcLambda;
+float mcDiscSum[MAXN], mcLambda;
 
 /*
  * Adds an edge with delta=d and reward=r between vertices
@@ -28,6 +28,10 @@ float mcExpSum[MAXN], mcLambda;
 void add_edge(bag *b, int i1, int i2, float d, float r)
 {
     // TODO: possible infinite loop?
+    if (d < EPSILON)
+        return;
+
+//    printf("Adding edge from %d to %d with delta %f and reward %f\n", *get_vertex(b, i1), *get_vertex(b, i2), d, r);
 
     edge *ej = b->edges[i1][i2];
 
@@ -47,7 +51,6 @@ void add_edge(bag *b, int i1, int i2, float d, float r)
     else
     {
         assert(1 - d * mcLambda != 0);
-        add_edge(b, i1, get_vertex_index(b, mcOneHat), d * r / (1 - d * mcLambda), 0.);
         int i;
         for (i=0; i<b->verCnt; i++)
         {
@@ -55,8 +58,10 @@ void add_edge(bag *b, int i1, int i2, float d, float r)
                 continue;
             b->edges[i1][i]->delta /= 1 - d * mcLambda;
         }
+        add_edge(b, i1, get_vertex_index(b, mcOneHat), d * r / (1 - d * mcLambda), 0.);
+//        printf("-----------------%d %d\n", *get_vertex(b, i1), *get_vertex(b, i2));
     }
-
+//    printf("The edge from %d to %d now has delta %f and reward %f\n\n", *get_vertex(b, i1), *get_vertex(b, i2), ej->delta, ej->reward);
 }
 
 /*
@@ -85,7 +90,7 @@ void remove_vertices(int curIndex, int parIndex)
         while (get_first_extra_vertex(b, mcBags + parIndex) != -1)
         {
             int u = get_first_extra_vertex(b, mcBags + parIndex);
-            printf("\nremoving: %d\n", u);
+//            printf("\nremoving: %d\n", u);
             assert(!mcRemoved[u]);
             mcRemoved[u] = true;
 
@@ -137,7 +142,7 @@ void return_vertices(int curIndex, int parIndex)
         while (get_last_extra_vertex(kid, b) != -1)
         {
             int u = get_last_extra_vertex(kid, b);
-            printf("returning vertex %d from bag %d\n", u, get_kid(mcBags + curIndex, i)->id);
+//            printf("\nreturning vertex %d from bag %d\n", u, get_kid(mcBags + curIndex, i)->id);
 
             assert(!mcReturned[u]);
             mcReturned[u] = true;
@@ -147,8 +152,12 @@ void return_vertices(int curIndex, int parIndex)
                 if(j==uIndex || !mcReturned[*get_vertex(kid, j)]) //TODO: double check
                     continue;
                 else
-                    mcExpSum[u] += kid->edges[uIndex][j]->delta * ( kid->edges[uIndex][j]->reward
-                            + mcLambda * mcExpSum[*get_vertex(kid, j)]);
+                {
+                    mcDiscSum[u] += kid->edges[uIndex][j]->delta * (kid->edges[uIndex][j]->reward
+                                                                    + mcLambda * mcDiscSum[*get_vertex(kid, j)]);
+//                    printf("updating y_%d += %f * ( %f + %f * Discsum[%d]=%f)\n", u, kid->edges[uIndex][j]->delta,
+//                           kid->edges[uIndex][j]->reward, mcLambda, *get_vertex(kid, j), mcDiscSum[*get_vertex(kid, j)]);
+                }
             }
         }
         return_vertices(kid->id, curIndex);
@@ -214,7 +223,7 @@ float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, float lamb
     mcTotE = vector_total(&e);
     mcLambda = lambda;
 
-    memset(mcExpSum, 0, sizeof(mcExpSum));
+    memset(mcDiscSum, 0, sizeof(mcDiscSum));
     memset(mcRemoved, 0, sizeof(mcRemoved));
     memset(mcReturned, 0, sizeof(mcReturned));
 
@@ -223,16 +232,17 @@ float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, float lamb
     remove_vertices(mcBagsNum - 1, -1);
 //    printf("\n-------------------------------\n\n");
 
-    mcExpSum[mcOneHat] = 1.;
+    mcDiscSum[mcOneHat] = 1.;
+    mcReturned[mcOneHat] = 1.;
     return_vertices(mcBagsNum - 1, -1);
 //    printf("\n-------------------------------\n\n");
 
     clock_t end = clock();
 
     for (i=0; i<totV; i++)
-        res[i] = mcExpSum[i];
+        res[i] = mcDiscSum[i];
 
     return (float) (end - begin) / CLOCKS_PER_SEC;
 }
 
-#endif //RMC_TREEWIDTH_CODE_MC_EXPSUM_SOLVE_H
+#endif //RMC_TREEWIDTH_CODE_MC_DISCSUM_SOLVE_H
