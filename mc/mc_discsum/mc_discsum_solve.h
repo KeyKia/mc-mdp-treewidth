@@ -58,7 +58,7 @@ void add_edge(bag *b, int i1, int i2, float d, float r)
                 continue;
             b->edges[i1][i]->delta /= 1 - d * mcLambda;
         }
-        add_edge(b, i1, get_vertex_index(b, mcOneHat), d * r / (1 - d * mcLambda), 0.);
+        add_edge(b, i1, get_vertex_index(b, mcOneHat), d * r / ((1 - d * mcLambda)*mcLambda), 0.);
 //        printf("-----------------%d %d\n", *get_vertex(b, i1), *get_vertex(b, i2));
     }
 //    printf("The edge from %d to %d now has delta %f and reward %f\n\n", *get_vertex(b, i1), *get_vertex(b, i2), ej->delta, ej->reward);
@@ -187,7 +187,7 @@ float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, float lamb
     }
     edge *ej = malloc(sizeof(edge));
     ej->v = mcOneHat; ej->u = mcOneHat;
-    ej->delta = 1.; ej->reward = lambda;
+    ej->delta = 1.; ej->reward = 1 - lambda;
     vector_add(&e, ej);
 
     // add a new bag that contains only 1^ and will be the root bag
@@ -233,7 +233,7 @@ float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, float lamb
 //    printf("\n-------------------------------\n\n");
 
     mcDiscSum[mcOneHat] = 1.;
-    mcReturned[mcOneHat] = 1.;
+    mcReturned[mcOneHat] = 1;
     return_vertices(mcBagsNum - 1, -1);
 //    printf("\n-------------------------------\n\n");
 

@@ -89,7 +89,7 @@ int main()
         if (de->d_name[0] == '.')
             continue;
 //        printf("%s\n", de->d_name);
-//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mc_discsum/asm-3.1/a.txt";
+//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/mc/mc_discsum/example3.txt";
         char file_path[256];
         strcpy(file_path, dir_path);
         strcat(file_path, de->d_name);

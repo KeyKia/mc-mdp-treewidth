@@ -52,7 +52,7 @@ def get_tree(inp):
 input_file = sys.argv[1]
 output_dir = sys.argv[2]
 with open(input_file) as f:
-    lines = ''.join(f.readlines()).split('\n')
+    lines = ''.join(f.readlines()).split('\n')[:-1]
     for i in range(0, len(lines), 15):
         method_name = lines[i+2].split(':')[1]
         output_file = output_dir + '/' + method_name + '.txt'
