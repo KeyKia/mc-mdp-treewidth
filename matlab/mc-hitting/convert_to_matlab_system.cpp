@@ -60,12 +60,12 @@ int main(int argc, char **argv)
 		cout<<endl;
 	}
 
-	cout <<" t = cputime;"<<endl;
+	cout <<" tTheVar = cputime;"<<endl;
 	
 	// [A,B] = equationsToMatrix([eqn1, eqn2, eqn3], [x, y, z])
 
 	cout<<endl<<endl;
-	cout<<"[A,B] = equationsToMatrix([";
+	cout<<"[ATheVar,BTheVar] = equationsToMatrix([";
 	
 	bool first=true;
 	for(auto v:vertices)
@@ -90,11 +90,11 @@ int main(int argc, char **argv)
 	
 	cout<<"]);"<<endl;
 	
-	cout<<"X = A\\B;"<<endl;
+	cout<<"XTheVar = ATheVar\\BTheVar;"<<endl;
 	
-	cout<<"e = cputime - t;"<<endl;
+	cout<<"eTheVar = cputime - tTheVar;"<<endl;
 	
-	cout<<"fprintf(2, \" %6.6f \" ,e);"<<endl;
+	cout<<"fprintf(2, \" %6.6f \" ,eTheVar);"<<endl;
 	
 	return 0;
 }

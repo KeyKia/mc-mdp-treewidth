@@ -6,14 +6,15 @@ for filename in ../../benchmarks/dacapobenchmark/outputs/raw_outputs/*.txt; do
 	mkdir mcs-$name
 	python ../../mc/mc_utils/mcprob_reformat.py ../../benchmarks/dacapobenchmark/outputs/raw_outputs/$name.txt mcs-$name
 	totaltime=0
+	rm */*">"*.txt
 	for txtfile in mcs-$name/*.txt; do
-		echo $txtfile
+		echo textfile is $txtfile
 		./cnv $txtfile
 		txtfilename=${txtfile%.txt};
 		matlabfilename=$txtfilename.m
 		echo "matlab file name is" $matlabfilename
 		#/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r $txtfile.m 2> $txtfile.log 
-		/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r "run('$matlabfilename');exit;" >> /dev/null 2> $txtfile.log 
+		/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r "run('$matlabfilename');exit;" >/dev/null 2> $txtfile.log 
 		v=`cat $txtfile.log`
 		echo thistime is $v
 		echo $v + $totaltime | bc > temp.tmp
