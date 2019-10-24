@@ -12,7 +12,8 @@ int main(int argc, char **argv)
 {
 	ifstream cin(argv[1]);
 	string outpath = argv[1];
-	outpath+=".m";
+	outpath = outpath.substr(0, outpath.length()-3);
+	outpath+="m";
 	ofstream cout(outpath.c_str());
 	
 	int temp, e, target;

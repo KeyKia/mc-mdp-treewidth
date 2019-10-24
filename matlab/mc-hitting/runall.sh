@@ -9,7 +9,11 @@ for filename in ../../benchmarks/dacapobenchmark/outputs/raw_outputs/*.txt; do
 	for txtfile in mcs-$name/*.txt; do
 		echo $txtfile
 		./cnv $txtfile
-		cat $txtfile.m | /Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop >>/dev/null 2> $txtfile.log 
+		txtfilename=${txtfile%.txt};
+		matlabfilename=$txtfilename.m
+		echo "matlab file name is" $matlabfilename
+		#/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r $txtfile.m 2> $txtfile.log 
+		/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r "run('$matlabfilename');exit;" >> /dev/null 2> $txtfile.log 
 		v=`cat $txtfile.log`
 		echo thistime is $v
 		echo $v + $totaltime | bc > temp.tmp
