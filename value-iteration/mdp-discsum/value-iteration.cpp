@@ -115,8 +115,8 @@ int main(int argc, char **argv)
 	
 	auto stop = high_resolution_clock::now(); 
 	
-	auto duration = duration_cast<milliseconds>(stop - start); 
-	cout<<fixed<<setprecision(6)<<duration.count()/double(1000)<<endl;
+	auto duration = duration_cast<microseconds>(stop - start); 
+	cout<<fixed<<setprecision(6)<<duration.count()/double(1e6)<<endl;
 	
 	return 0;
 }
