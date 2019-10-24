@@ -19,7 +19,7 @@
 //vector chooseVertices;
 int totChooseV, totProbV, totV, totE, target, bagsNum;
 int isChoose[MAXN], policy[MAXN]; // policy[u] indicates the "index" of the edge to choose among choices[u]
-float hitPr[MAXN];
+double hitPr[MAXN];
 
 void input(char file_path[], bag* bags, vector *e, vector *choices, vector *chooseVertices)
 {
@@ -55,7 +55,7 @@ void input(char file_path[], bag* bags, vector *e, vector *choices, vector *choo
     for (i = 0; i < totE; i++)
     {
         edge *ej = malloc(sizeof(edge)); int isChooseEdge;
-        fscanf(fp, "%d%d%f%d", &(ej->v), &(ej->u), &(ej->delta), &isChooseEdge);
+        fscanf(fp, "%d%d%lf%d", &(ej->v), &(ej->u), &(ej->delta), &isChooseEdge);
         if (ej->v == target)
             ej->delta = 0.0; //remove edges leaving target -- causes no change in hitting probs
         if (isChooseEdge && ej->v != target)
@@ -118,7 +118,7 @@ int main()
         return 0;
     }
 
-    float time_spent = 0., tot_iters=0., num_mdps=0;
+    double time_spent = 0., tot_iters=0., num_mdps=0;
     while ((de = readdir(dr)) != NULL)
     {
         if (de->d_name[0] == '.')
@@ -158,7 +158,7 @@ int main()
             }
 
             memset(hitPr, 0, sizeof(hitPr));
-            float tmp = solve_mc(bags, bagsNum, *e, totV, totE, target, hitPr);
+            double tmp = solve_mc(bags, bagsNum, *e, totV, totE, target, hitPr);
 
             for (i = 0; i < vector_total(chooseVertices); i++)
             {
@@ -171,7 +171,7 @@ int main()
 
                 // update the policy according to computed Hit Probs
                 int newChoiceID = policy[*v];
-                float maxProb = hitPr[choice->u];
+                double maxProb = hitPr[choice->u];
                 for (j = 0; j < vector_total(choices + *v); j++)
                 {
                     edge *cur = vector_get(choices + *v, j);
@@ -189,7 +189,7 @@ int main()
             iter++;
 
             clock_t end = clock();
-            time_spent += (float) (end - begin) / CLOCKS_PER_SEC;
+            time_spent += (double) (end - begin) / CLOCKS_PER_SEC;
 
         } while (!done);
 
