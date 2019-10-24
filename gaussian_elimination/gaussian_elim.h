@@ -15,12 +15,6 @@ int Gaussian_Elimination(double *A, int n, double *B)
     int row, i, j, pivot_row;
     double max, dum, *pa, *pA, *A_pivot_row;
 
-//    for (i=0; i<n; i++){
-//        for (j=0; j<n; j++)
-//            printf("%f ", A[i][j]);
-//        printf("\n");
-//    }
-
     // for each variable find pivot row and perform forward substitution
 
     pa = A;
@@ -81,9 +75,14 @@ int Gaussian_Elimination(double *A, int n, double *B)
 
 double gaussian_solve_mc_discsum(vector e, int totV, int totE, double lambda, double res[])
 {
+    if (totV>=1241)
+        return 0;
+
     double A[totV][totV], B[totV];
     memset(A, 0, sizeof(A));
     memset(B, 0, sizeof(B));
+
+    clock_t begin = clock();
 
     int i, j;
     for (i=0; i<totV; i++)
@@ -100,10 +99,52 @@ double gaussian_solve_mc_discsum(vector e, int totV, int totE, double lambda, do
     }
     int has_solution = Gaussian_Elimination(&A[0][0], totV, B);
     if (!has_solution)
-        printf("******************* NO SOLUTION! *******************\n");
+//        printf("******************* NO SOLUTION! *******************\n");
+        ;
     else
         for (i=0; i<totV; i++)
             res[i] = B[i];
+
+    clock_t end = clock();
+    return (double) (end - begin) / CLOCKS_PER_SEC;
+}
+
+double gaussian_solve_mc_hitprob(vector e, int totV, int totE, int target, double res[])
+{
+
+    if (totV>=1241)
+        return 0;
+    double A[totV][totV], B[totV];
+    memset(A, 0, sizeof(A));
+    memset(B, 0, sizeof(B));
+
+    clock_t begin = clock();
+
+    int i, j;
+    for (i=0; i<totV; i++)
+        A[i][i] = -1.;
+    A[target][target] = 1.;
+    B[target] = 1;
+
+    assert(totE == vector_total(&e));
+    for (i=0; i<totE; i++)
+    {
+        edge *ej = vector_get(&e, i);
+        if (ej->delta < EPSILON)
+            continue;
+        A[ej->v][ej->u] += ej->delta;
+    }
+
+    int has_solution = Gaussian_Elimination(&A[0][0], totV, B);
+    if (!has_solution)
+//        printf("******************* NO SOLUTION! *******************\n");
+        ;
+    else
+        for (i=0; i<totV; i++)
+            res[i] = B[i];
+
+    clock_t end = clock();
+    return (double) (end - begin) / CLOCKS_PER_SEC;
 }
 
 #endif //RMC_TREEWIDTH_CODE_GAUSSIAN_ELIM_H
