@@ -2,6 +2,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <iostream>
 using namespace std;
 
 set<int> vertices;
@@ -12,10 +13,10 @@ map<pair<int,int>, int> edgereward;
 int main(int argc, char **argv)
 {
 	ifstream cin(argv[1]);
-	string outpath = argv[1];
+	/*string outpath = argv[1];
 	outpath = outpath.substr(0, outpath.length()-3);
 	outpath+="m";
-	ofstream cout(outpath.c_str());
+	ofstream cout(outpath.c_str());*/
 	
 	int temp, e;
 	double lambda;
@@ -96,7 +97,9 @@ int main(int argc, char **argv)
 	
 	cout<<"eTheVar = cputime - tTheVar;"<<endl;
 	
-	cout<<"fprintf(2, \" %6.6f \" ,eTheVar);"<<endl;
+	cout<<"fprintf(2, \"%6.6f\\n\" ,eTheVar);"<<endl;
+	
+	cout<<endl<<"clear;"<<endl<<endl<<endl;
 	
 	return 0;
 }
