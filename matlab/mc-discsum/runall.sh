@@ -7,23 +7,11 @@ for filename in ../../benchmarks/dacapobenchmark/outputs/raw_outputs/*.txt; do
 	python ../../mc/mc_utils/mcdiscsum_reformat.py ../../benchmarks/dacapobenchmark/outputs/raw_outputs/$name.txt mcs-$name
 	totaltime=0
 	for txtfile in mcs-$name/*.txt; do
-		if [[ "$txtfile" =~ [^a-zA-Z0-9_./-] ]]; then
-			echo "Skipping invalid file" $txtfile;
-			continue
-		fi;
 		echo textfile is $txtfile
-		./cnv $txtfile	
-		txtfilename=${txtfile%.txt};
-		matlabfilename=$txtfilename.m
-		echo "matlab file name is" $matlabfilename
-		#/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r $txtfile.m 2> $txtfile.log 
-		/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r "run('$matlabfilename');exit;" >/dev/null 2> $txtfile.log 
-		v=`cat $txtfile.log`
-		echo thistime is $v
-		echo $v + $totaltime | bc > temp.tmp
-		totaltime=`cat temp.tmp`
-		echo totaltime is $totaltime
+		./cnv $txtfile >> mcs-$name/matlabcode.m
 	done
-	echo $name $totaltime >> results.txt
+	/Applications/MATLAB_R2019b.app/bin/matlab -nodisplay -nosplash -nodesktop -r "run('mcs-$name/matlabcode.m');exit;" 2>> mcs-$name/log-matlab.txt 
+	tm=`paste -sd+ mcs-$name/log-matlab.txt | bc`
+	echo $name $tm >> results.txt
 done
 
