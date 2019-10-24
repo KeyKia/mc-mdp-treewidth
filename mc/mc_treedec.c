@@ -68,7 +68,7 @@ int *get_vertex(bag *b,int ind)
     return vector_get(&(b->vertices),ind);
 }
 
-float get_edge_prob(bag *b,int v,int u)
+double get_edge_prob(bag *b,int v,int u)
 {
     v=get_vertex_index(b,v);
     u=get_vertex_index(b,u);
@@ -134,5 +134,5 @@ int get_last_extra_vertex(bag *b1, bag *b2)
 
 void print_edge(edge *ejj)
 {
-    printf("connecting edge: from %d to %d with %f\n",ejj->v,ejj->u,ejj->delta);
+    printf("connecting edge: from %d to %d with delta %f and reward %f\n",ejj->v,ejj->u,ejj->delta, ejj->reward);
 }

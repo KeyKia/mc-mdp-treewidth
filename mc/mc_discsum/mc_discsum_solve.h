@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 #include "../../utils/vector.h"
 #include "../mc_treedec.h"
 
@@ -18,17 +19,17 @@
 vector mcE; //contains all possible edges of each bag (even with 0 delta)
 bag mcBags[MAXN]; //the bags
 int mcTotV, mcTotE, mcOneHat, mcBagsNum; // vertices, edges, and mcTarget in the Markov chain
-float mcDiscSum[MAXN], mcLambda;
+double mcDiscSum[MAXN], mcLambda;
 
 /*
  * Adds an edge with delta=d and reward=r between vertices
  * at index i1 and i2 of bag b. And takes care of potential
  * parallel edges and loops.
  */
-void add_edge(bag *b, int i1, int i2, float d, float r)
+void add_edge(bag *b, int i1, int i2, double d, double r)
 {
     // TODO: possible infinite loop?
-    if (d < EPSILON)
+    if (fabs(d) <= EPSILON)
         return;
 
 //    printf("Adding edge from %d to %d with delta %f and reward %f\n", *get_vertex(b, i1), *get_vertex(b, i2), d, r);
@@ -36,12 +37,12 @@ void add_edge(bag *b, int i1, int i2, float d, float r)
     edge *ej = b->edges[i1][i2];
 
     // no parallel edge && no self-loop
-    if (ej->delta < EPSILON && i1 != i2) // TODO: ej->delta < 0
+    if (fabs(ej->delta) <= EPSILON && i1 != i2) // TODO: ej->delta < 0
     {
         ej->delta = d;
         ej->reward = r;
     }
-    // parallel edge (but no self-loop)
+    // parallel edge
     else if (i1 != i2 )
     {
         ej->reward = (ej->delta * ej->reward + d * r) / (ej->delta + d);
@@ -61,7 +62,9 @@ void add_edge(bag *b, int i1, int i2, float d, float r)
         add_edge(b, i1, get_vertex_index(b, mcOneHat), d * r / ((1 - d * mcLambda)*mcLambda), 0.);
 //        printf("-----------------%d %d\n", *get_vertex(b, i1), *get_vertex(b, i2));
     }
-//    printf("The edge from %d to %d now has delta %f and reward %f\n\n", *get_vertex(b, i1), *get_vertex(b, i2), ej->delta, ej->reward);
+
+//    printf("The edge from %d to %d now has delta %f and reward %f\n\n", *get_vertex(b, i1), *get_vertex(b, i2),
+//               ej->delta, ej->reward);
 }
 
 /*
@@ -90,7 +93,9 @@ void remove_vertices(int curIndex, int parIndex)
         while (get_first_extra_vertex(b, mcBags + parIndex) != -1)
         {
             int u = get_first_extra_vertex(b, mcBags + parIndex);
-//            printf("\nremoving: %d\n", u);
+//            printf("removing: %d\n", u);
+//            if (u==18)
+//                bag_print(b);
             assert(!mcRemoved[u]);
             mcRemoved[u] = true;
 
@@ -107,6 +112,12 @@ void remove_vertices(int curIndex, int parIndex)
                     continue;
 
                 edge *in = b->edges[i][uIndex];
+//                if (u==18)
+//                {
+//                    printf("Adding edge from %d to %d with delta %f * %f / %f = %f\n", *get_vertex(b, i),
+//                           *get_vertex(b, oneHatIdx),
+//                           in->delta, in->reward, mcLambda, in->delta * in->reward / mcLambda);
+//                }
                 add_edge(b, i, oneHatIdx, in->delta * in->reward / mcLambda, 0.);
 
                 for (j = 0; j < b->verCnt; j++)
@@ -114,10 +125,14 @@ void remove_vertices(int curIndex, int parIndex)
                     if (mcRemoved[*get_vertex(b, j)]) // TODO mcOneHat
                         continue;
                     edge *out = b->edges[uIndex][j];
+//                    if (u==18)
+//                        printf("Adding edge from %d to %d with delta %f and reward %f\n", *get_vertex(b, i), *get_vertex(b, j),
+//                               in->delta * out->delta * mcLambda, out->reward);
                     add_edge(b, i, j, in->delta * out->delta * mcLambda, out->reward);
-//                    print_edge(connection);
                 }
             }
+//            if (u==18)
+//                bag_print(b);
         }
     }
 
@@ -155,7 +170,9 @@ void return_vertices(int curIndex, int parIndex)
                 {
                     mcDiscSum[u] += kid->edges[uIndex][j]->delta * (kid->edges[uIndex][j]->reward
                                                                     + mcLambda * mcDiscSum[*get_vertex(kid, j)]);
-//                    printf("updating y_%d += %f * ( %f + %f * Discsum[%d]=%f)\n", u, kid->edges[uIndex][j]->delta,
+
+//                    if (u==18)
+//                        printf("updating y_%d += %f * ( %f + %f * Discsum[%d]=%f)\n", u, kid->edges[uIndex][j]->delta,
 //                           kid->edges[uIndex][j]->reward, mcLambda, *get_vertex(kid, j), mcDiscSum[*get_vertex(kid, j)]);
                 }
             }
@@ -166,7 +183,7 @@ void return_vertices(int curIndex, int parIndex)
 }
 
 
-float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, float lambda, float res[])
+double solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, double lambda, double res[])
 {
     mcOneHat = totV; // The vertex 1^ that we add to every bag (here we make it the n-th vertex)
     int i, j;
@@ -242,7 +259,7 @@ float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, float lamb
     for (i=0; i<totV; i++)
         res[i] = mcDiscSum[i];
 
-    return (float) (end - begin) / CLOCKS_PER_SEC;
+    return (double) (end - begin) / CLOCKS_PER_SEC;
 }
 
 #endif //RMC_TREEWIDTH_CODE_MC_DISCSUM_SOLVE_H

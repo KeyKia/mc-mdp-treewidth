@@ -10,7 +10,7 @@
 bag bags[MAXN];
 vector e;
 int totV, totE, bagsNum;
-float discSum[MAXN], lambda;
+double discSum[MAXN], lambda;
 
 void input(char file_path[])
 {
@@ -19,14 +19,14 @@ void input(char file_path[])
     int i, j;
 
     //read mcTotV
-    fscanf(fp, "%d%d%f", &totV, &totE, &lambda);
+    fscanf(fp, "%d%d%lf", &totV, &totE, &lambda);
 
     vector_init(&e);
     //get edges
     for (i = 0; i < totE; i++)
     {
         edge *ej = malloc(sizeof(edge));
-        fscanf(fp, "%d%d%f%f", &(ej->v), &(ej->u), &(ej->delta), &(ej->reward));
+        fscanf(fp, "%d%d%lf%lf", &(ej->v), &(ej->u), &(ej->delta), &(ej->reward));
         vector_add(&e, ej);
     }
 
@@ -83,13 +83,13 @@ int main()
         return 0;
     }
 
-    float time_spent = 0.;
+    double time_spent = 0.;
     while ((de = readdir(dr)) != NULL)
     {
         if (de->d_name[0] == '.')
             continue;
 //        printf("%s\n", de->d_name);
-//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/mc/mc_discsum/example3.txt";
+//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/mc/mc_discsum/example2.txt";
         char file_path[256];
         strcpy(file_path, dir_path);
         strcat(file_path, de->d_name);
@@ -100,7 +100,7 @@ int main()
         time_spent += solve_mc(bags, bagsNum, e, totV, totE, lambda, discSum);
 
 //        int i;
-//        for (i = 0; i <= totV; i++)
+//        for (i = 0; i < totV; i++)
 //            printf("Expected discounted sum of vertex %d: %f\n", i, discSum[i]);
     }
     printf("\nTime spent: %f seconds\n", time_spent);

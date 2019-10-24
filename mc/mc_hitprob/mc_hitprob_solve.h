@@ -24,7 +24,7 @@
 vector mcE; //contains all possible edges of each bag (even with 0 delta)
 bag mcBags[MAXN]; //the bags
 int mcTotV, mcTotE, mcTarget, mcBagsNum; // vertices, edges, and mcTarget in the Markov chain
-float mcHitPr[MAXN];
+double mcHitPr[MAXN];
 
 /*
  * remove_vertices() removes all vertices one by one, while keeping the Hitting
@@ -63,7 +63,7 @@ void remove_vertices(int curIndex, int parIndex)
             /* removes vertex u and updates the delta of edges among
              * its neighbors.
              */
-            float f = 1. / (1. - b->edges[uIndex][uIndex]->delta);
+            double f = 1. / (1. - b->edges[uIndex][uIndex]->delta);
             b->edges[uIndex][uIndex]->delta = 0.;
 
             for (i = 0; i < b->verCnt; i++)
@@ -128,7 +128,7 @@ void return_vertices(int curIndex, int parIndex)
 }
 
 
-float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, int target, float res[])
+double solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, int target, double res[])
 {
     // TODO: either new them here or in source (e.g. mcE is not used)
     mcBagsNum = bagsNum;
@@ -156,7 +156,7 @@ float solve_mc(bag bags[], int bagsNum, vector e, int totV, int totE, int target
     for (i=0; i<totV; i++)
         res[i] = mcHitPr[i];
 
-    return (float) (end - begin) / CLOCKS_PER_SEC;
+    return (double) (end - begin) / CLOCKS_PER_SEC;
 }
 
 #endif //RMC_TREEWIDTH_CODE_MC_HITPROB_SOLVE_H

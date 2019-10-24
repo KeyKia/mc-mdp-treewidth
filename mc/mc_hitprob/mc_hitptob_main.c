@@ -10,7 +10,7 @@
 bag bags[MAXN];
 vector e;
 int totV, totE, target, bagsNum;
-float res[MAXN];
+double res[MAXN];
 
 void input(char file_path[])
 {
@@ -85,7 +85,7 @@ int main()
         return 0;
     }
 
-    float time_spent = 0.;
+    double time_spent = 0.;
     while ((de = readdir(dr)) != NULL)
     {
         if (de->d_name[0] == '.')

@@ -7,7 +7,7 @@
 
 #define MAX_TREEWIDTH 40
 #define MAXN 2010
-#define EPSILON 1e-6
+#define EPSILON 1e-8
 
 #include "../utils/vector.h"
 #include <stdbool.h>
@@ -15,7 +15,7 @@
 typedef struct edge
 {
     int v, u;
-    float delta, reward;
+    double delta, reward;
 } edge;
 
 typedef struct bag
@@ -40,7 +40,7 @@ void bag_add_edge(bag *, edge *); //add edges within bag vertices
 void bag_print(bag *); //prints bag vertices, edges (with probs), and kids
 int get_vertex_index(bag *,int); //returns the index of vertex u in the vectors of the bag
 int *get_vertex(bag *, int); //returns the vertex given its index in the bag
-float get_edge_prob(bag *, int, int);
+double get_edge_prob(bag *, int, int);
 bag *get_kid(bag*,int); // returns kid given its index in the bag
 bool has_vertex(bag*,int); // returns whether the bag has a specific vertex
 int get_first_extra_vertex(bag *, bag *);  //returns the first vertex in first bag not in second bag or -1
