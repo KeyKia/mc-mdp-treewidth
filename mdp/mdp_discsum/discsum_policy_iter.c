@@ -117,7 +117,7 @@ void input(char file_path[], bag* bags, vector *e, vector *choices, vector *choi
 int main()
 {
 
-    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mdp_discsum/eclipse/";
+    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mdp_discsum/";
     struct dirent *de;  // Pointer for directory entry
     DIR *dr = opendir(dir_path);
     if (dr == NULL)
@@ -125,123 +125,129 @@ int main()
         printf("Could not open current directory" );
         return 0;
     }
-
-    double time_spent = 0., tot_iters=0., num_mdps=0;
+    double all_means[50]; char all_names[50][256]; int file_n=0, flag=0, end_this_shit=0;
     while ((de = readdir(dr)) != NULL)
     {
+        if (de->d_name[0] == 'j' && de->d_name[1]=='a' && de->d_name[2]=='f' && de->d_name[3]=='f' && de->d_name[4]=='l')
+            break;
+//        if (!flag)
+//            continue;
         if (de->d_name[0] == '.')
             continue;
-//        printf("%s\n",de->d_name);
-        num_mdps++;
-//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/mdp/mdp_discsum/example.txt";
-//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mdp_discsum/eclipse/parseActions.txt";
-        char file_path[256];
-        strcpy(file_path, dir_path);
-        strcat(file_path, de->d_name);
+        char subdir_path[256];
+        strcpy(subdir_path, dir_path);
+        strcat(subdir_path, de->d_name);
+        strcat(subdir_path, "/");
 
-        int i, j, iter = 0, done = 1;
-
-        memset(discSum, 0, sizeof(discSum));
-        memset(isChoose, 0, sizeof(isChoose));
-        memset(policy, 0, sizeof(policy));
-
-        do
+        struct dirent *sde;  // Pointer for directory entry
+        DIR *sdr = opendir(subdir_path);
+        if (sdr == NULL)
         {
-            done = 1;
+            printf("Could not open benchmark within directory" );
+            return 0;
+        }
 
-            bag *bags = malloc(MAXN * sizeof(bag));
-            vector *e = malloc(sizeof(vector));
-            vector *choices = malloc(MAXN * sizeof(vector));
-            vector *choices_copy = malloc(MAXN * sizeof(vector));
-            vector *chooseVertices = malloc(sizeof(vector));
+        double time_spent = 0., tot_iters=0., num_mdps=0;
+        while ((sde = readdir(sdr)) != NULL)
+        {
+            if (sde->d_name[0] == '.')
+                continue;
+            char file_path[256];
+            strcpy(file_path, subdir_path);
+            strcat(file_path, sde->d_name);
 
-            input(file_path, bags, e, choices, choices_copy, chooseVertices); // read input here each time to re-new everything
-            if (lambda>0.95)
-                lambda = 0.9;
-
-            clock_t begin = clock();
-
-            // affect the current policy and prepare the Markov chain
-            for (i = 0; i < vector_total(chooseVertices); i++)
-            {
-                int *v = vector_get(chooseVertices, i);
-                if (vector_total(choices + *v) == 0)
-                    continue;
-                edge *choice = vector_get(choices + *v, policy[*v]);
-                choice->delta = 1.;
-            }
+            num_mdps++;
+            int i, j, iter = 0, done = 1;
 
             memset(discSum, 0, sizeof(discSum));
+            memset(isChoose, 0, sizeof(isChoose));
+            memset(policy, 0, sizeof(policy));
 
-//            double tmp = solve_mc(bags, bagsNum, *e, totV, totE, lambda, discSum);
-            gaussian_solve_mc_discsum(*e, totV, totE, lambda, discSum);
-
-            for (i = 0; i < vector_total(chooseVertices); i++)
+            do
             {
-                int *v = vector_get(chooseVertices, i);
-                if (vector_total(choices_copy + *v) == 0)
-                    continue;
+                done = 1;
 
-                // update the policy according to computed Hit discSums
-                // we use choices_copy cause the rewards in choices has changed within solve_mc
-                edge *choice = vector_get(choices_copy + *v, policy[*v]);
-                int newChoiceID = policy[*v];
-                double maxDiscSum = choice->reward + lambda * discSum[choice->u];
+                bag *bags = malloc(MAXN * sizeof(bag));
+                vector *e = malloc(sizeof(vector));
+                vector *choices = malloc(MAXN * sizeof(vector));
+                vector *choices_copy = malloc(MAXN * sizeof(vector));
+                vector *chooseVertices = malloc(sizeof(vector));
 
-//                if (choice->reward + lambda * discSum[choice->u] != discSum[*v])
-//                {
-//                    printf("ridiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
-//                    printf("%f != %f\n", choice->reward + lambda * discSum[choice->u], discSum[*v]);
-//                    printf("discSum[%d] = %f\n",choice->u, discSum[choice->u]);
-//                    print_edge(choice);
-//                }
+                input(file_path, bags, e, choices, choices_copy, chooseVertices); // read input here each time to re-new everything
 
-                for (j = 0; j < vector_total(choices_copy + *v); j++)
+                if (lambda>0.9) //TODO: fix
+                    lambda = 0.9;
+
+                clock_t begin = clock();
+
+                // affect the current policy and prepare the Markov chain
+                for (i = 0; i < vector_total(chooseVertices); i++)
                 {
-                    edge *cur = vector_get(choices_copy + *v, j);
-                    if (cur->reward + lambda * discSum[cur->u] - maxDiscSum > EPSILON)
+                    int *v = vector_get(chooseVertices, i);
+                    if (vector_total(choices + *v) == 0)
+                        continue;
+                    edge *choice = vector_get(choices + *v, policy[*v]);
+                    choice->delta = 1.;
+                }
+
+                memset(discSum, 0, sizeof(discSum));
+
+                double tmp = solve_mc(bags, bagsNum, *e, totV, totE, lambda, discSum);
+//                if (totV >= 1241)
+//                    break;
+//                gaussian_solve_mc_discsum(*e, totV, totE, lambda, discSum);
+
+                for (i = 0; i < vector_total(chooseVertices); i++)
+                {
+                    int *v = vector_get(chooseVertices, i);
+                    if (vector_total(choices_copy + *v) == 0)
+                        continue;
+
+                    // update the policy according to computed Hit discSums
+                    // we use choices_copy cause the rewards in choices has changed within solve_mc
+                    edge *choice = vector_get(choices_copy + *v, policy[*v]);
+                    int newChoiceID = policy[*v];
+                    double maxDiscSum = choice->reward + lambda * discSum[choice->u];
+
+                    for (j = 0; j < vector_total(choices_copy + *v); j++)
                     {
-                        maxDiscSum = cur->reward + lambda * discSum[cur->u];
-                        newChoiceID = j;
+                        edge *cur = vector_get(choices_copy + *v, j);
+                        if (cur->reward + lambda * discSum[cur->u] - maxDiscSum > 1.5) //TODO: threshold
+                        {
+                            maxDiscSum = cur->reward + lambda * discSum[cur->u];
+                            newChoiceID = j;
+                        }
                     }
+                    assert(newChoiceID != -1);
+                    if (newChoiceID != policy[*v])
+                        done = 0;
+
+                    policy[*v] = newChoiceID;
+
                 }
-                assert(newChoiceID != -1);
-                if (newChoiceID != policy[*v])
-                {
-                    done = 0;
-//                    edge *last = vector_get(choices_copy + *v, policy[*v]);
-//                    edge *current = vector_get(choices_copy + *v, newChoiceID);
-//                    printf("Policy changed for vertex %d from %d to %d\n", *v, last->u, current->u);
-//                    printf("last: %f, current: %f\n", last->reward + lambda * discSum[last->u],
-//                            current->reward + lambda * discSum[current->u]);
-//                    print_edge(last);
-//                    print_edge(current);
-                }
+                iter++;
 
-                policy[*v] = newChoiceID;
-            }
-            iter++;
+                clock_t end = clock();
+                time_spent += (double) (end - begin) / CLOCKS_PER_SEC;
 
-            clock_t end = clock();
-            time_spent += (double) (end - begin) / CLOCKS_PER_SEC;
+                if (iter > 100)
+                    printf("ghaaatesh kon lamassaaaaab\n");
 
-//            for (i = 0; i < totV; i++)
-//                printf("Expected Discounted Sum of vertex %d: %f\n", i, discSum[i]);
-//
-//            if (iter>10){
-//                printf("-------------------------------%s\n", de->d_name);
-//                done = 1;
-//            }
+            } while (!done);
 
-        } while (!done);
+            tot_iters += iter;
 
-        tot_iters += iter;
-//        for (i = 0; i < totV; i++)
-//            printf("Expected Discounted Sum of vertex %d: %f\n", i, discSum[i]);
+        }
+        all_means[file_n] = tot_iters/num_mdps;
+        strcpy(all_names[file_n], de->d_name);
+        file_n++;
+        printf("| %s | %f |\n", de->d_name, time_spent);
     }
 
-    printf("\nMean number of iterations: %f\n", tot_iters/num_mdps);
-    printf("\nTime spent: %f seconds\n", time_spent);
+    printf("\n\nMean number of iterations:\n");
+    int i;
+    for (i=0; i<file_n; i++)
+        printf("| %s | %f |\n", all_names[i], all_means[i]);
 
     return 0;
 }
