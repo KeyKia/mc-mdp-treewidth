@@ -1,5 +1,5 @@
 **Computing Hitting Probabilities in Markov Chains with Small Treewidth**<br/><br/>
-Execution times in milli-seconds:
+Execution times in seconds:
 
 |                |  our method   |  gaussian elimination |
 |:--------------:|:-------------:|:---------------------:|
