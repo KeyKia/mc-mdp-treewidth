@@ -5,8 +5,8 @@
 #ifndef RMC_TREEWIDTH_CODE_MC_TREEDEC_H
 #define RMC_TREEWIDTH_CODE_MC_TREEDEC_H
 
-#define MAX_TREEWIDTH 40
-#define MAXN 2010
+#define MAX_TREEWIDTH 50
+#define MAXN 1510
 #define EPSILON 1e-8
 
 #include "../utils/vector.h"

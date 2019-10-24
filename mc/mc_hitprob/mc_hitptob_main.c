@@ -6,6 +6,7 @@
 #include <string.h>
 #include "../../utils/vector.h"
 #include "mc_hitprob_solve.h"
+#include "../../gaussian_elimination/gaussian_elim.h"
 
 bag bags[MAXN];
 vector e;
@@ -26,18 +27,19 @@ void input(char file_path[])
     for (i = 0; i < totE; i++)
     {
         edge *ej = malloc(sizeof(edge));
-        fscanf(fp, "%d%d%f", &(ej->v), &(ej->u), &(ej->delta));
+        fscanf(fp, "%d%d%lf", &(ej->v), &(ej->u), &(ej->delta));
         if (ej->v == target)
-            ej->delta = 0.0; //remove edges leaving mcTarget -- causes no change in hitting probs
+            ej->delta = 0.0; //remove edges leaving target -- causes no change in hitting probs
         vector_add(&e, ej);
     }
 
-    // read vertices and edges within mcBags
+    // read vertices and edges within bags
     fscanf(fp, "%d", &bagsNum);
     for (i = 0; i < bagsNum; i++)
     {
         bag_init(bags + i, i);
         int V, E;
+
         fscanf(fp, "%d%d", &V, &E);
 
         // read vertices within bag i
@@ -76,34 +78,49 @@ void input(char file_path[])
 int main()
 {
 
-    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/asm-3.1_mcprob_format/";
+    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mc_hitprob/";
     struct dirent *de;  // Pointer for directory entry
     DIR *dr = opendir(dir_path);
     if (dr == NULL)
     {
-        printf("Could not open current directory" );
+        printf("Could not open benchmarks directory" );
         return 0;
     }
-
-    double time_spent = 0.;
     while ((de = readdir(dr)) != NULL)
     {
         if (de->d_name[0] == '.')
             continue;
-        char file_path[256];
-        strcpy(file_path, dir_path);
-        strcat(file_path, de->d_name);
+        char subdir_path[256];
+        strcpy(subdir_path, dir_path);
+        strcat(subdir_path, de->d_name);
+        strcat(subdir_path, "/");
 
-        memset(res, 0, sizeof(res));
+        struct dirent *sde;  // Pointer for directory entry
+        DIR *sdr = opendir(subdir_path);
+        if (sdr == NULL)
+        {
+            printf("Could not open benchmark within directory" );
+            return 0;
+        }
 
-        input(file_path);
-        time_spent += solve_mc(bags, bagsNum, e, totV, totE, target, res);
+        double time_spent = 0.;
+        while ((sde = readdir(sdr)) != NULL)
+        {
+            if (sde->d_name[0] == '.')
+                continue;
+            char file_path[256];
+            strcpy(file_path, subdir_path);
+            strcat(file_path, sde->d_name);
 
-//        int i;
-//        for (i = 0; i < totV; i++)
-//            printf("Hitting prob of vertex %d: %f\n", i, res[i]);
+            memset(res, 0, sizeof(res));
+
+            input(file_path);
+//            time_spent += solve_mc(bags, bagsNum, e, totV, totE, target, res);
+            time_spent += gaussian_solve_mc_hitprob(e, totV, totE, target, res);
+
+        }
+        printf("|%s|%f|\n", de->d_name, time_spent);
     }
-    printf("\nTime spent: %f seconds\n", time_spent);
 
     return 0;
 }

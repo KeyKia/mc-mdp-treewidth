@@ -6,6 +6,7 @@
 #include <string.h>
 #include "../../utils/vector.h"
 #include "mc_discsum_solve.h"
+#include "../../gaussian_elimination/gaussian_elim.h"
 
 bag bags[MAXN];
 vector e;
@@ -74,7 +75,7 @@ void input(char file_path[])
 int main()
 {
 
-    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mc_discsum/asm-3.1/";
+    char dir_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/benchmarks/dacapobenchmark/outputs/mc_discsum/";
     struct dirent *de;  // Pointer for directory entry
     DIR *dr = opendir(dir_path);
     if (dr == NULL)
@@ -82,28 +83,40 @@ int main()
         printf("Could not open current directory");
         return 0;
     }
-
-    double time_spent = 0.;
     while ((de = readdir(dr)) != NULL)
     {
         if (de->d_name[0] == '.')
             continue;
-//        printf("%s\n", de->d_name);
-//        char file_path[256] = "/home/kiarash/Desktop/rmc/rmc-treewidth-code/mc/mc_discsum/example2.txt";
-        char file_path[256];
-        strcpy(file_path, dir_path);
-        strcat(file_path, de->d_name);
+        char subdir_path[256];
+        strcpy(subdir_path, dir_path);
+        strcat(subdir_path, de->d_name);
+        strcat(subdir_path, "/");
 
-        memset(discSum, 0, sizeof(discSum));
+        struct dirent *sde;  // Pointer for directory entry
+        DIR *sdr = opendir(subdir_path);
+        if (sdr == NULL)
+        {
+            printf("Could not open benchmark within directory" );
+            return 0;
+        }
+        double time_spent = 0.;
+        while ((sde = readdir(sdr)) != NULL)
+        {
+            if (sde->d_name[0] == '.')
+                continue;
+            char file_path[256];
+            strcpy(file_path, subdir_path);
+            strcat(file_path, sde->d_name);
 
-        input(file_path);
-        time_spent += solve_mc(bags, bagsNum, e, totV, totE, lambda, discSum);
+            memset(discSum, 0, sizeof(discSum));
 
-//        int i;
-//        for (i = 0; i < totV; i++)
-//            printf("Expected discounted sum of vertex %d: %f\n", i, discSum[i]);
+            input(file_path);
+//            time_spent += solve_mc(bags, bagsNum, e, totV, totE, lambda, discSum);
+            time_spent += gaussian_solve_mc_discsum(e, totV, totE, lambda, discSum);
+
+        }
+        printf("| %s | %f |\n", de->d_name, time_spent);
     }
-    printf("\nTime spent: %f seconds\n", time_spent);
 
     return 0;
 }
