@@ -6,10 +6,13 @@ for filename in ../../benchmarks/dacapobenchmark/outputs/raw_outputs/*.txt; do
 	mkdir mcs-$name
 	python ../../mc/mc_utils/mcprob_reformat.py ../../benchmarks/dacapobenchmark/outputs/raw_outputs/$name.txt mcs-$name
 	totaltime=0
-	rm */*">"*.txt
 	for txtfile in mcs-$name/*.txt; do
+		if [[ "$txtfile" =~ [^a-zA-Z0-9_./-] ]]; then
+			echo "Skipping invalid file" $txtfile;
+			continue
+		fi;
 		echo textfile is $txtfile
-		./cnv $txtfile
+		./cnv $txtfile	
 		txtfilename=${txtfile%.txt};
 		matlabfilename=$txtfilename.m
 		echo "matlab file name is" $matlabfilename
