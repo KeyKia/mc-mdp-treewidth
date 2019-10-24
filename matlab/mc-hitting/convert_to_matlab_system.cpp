@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	
 	cout<<"e = cputime - t;"<<endl;
 	
-	cout<<"disp(e);"<<endl;
+	cout<<"fprintf(2, \" %6.6f \" ,e);"<<endl;
 	
 	return 0;
 }
