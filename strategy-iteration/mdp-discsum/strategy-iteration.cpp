@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 			{
 				auto prev = V[u];
 				V[u] = edge_reward[mp(u, sigma[u])] + lambda * V[sigma[u]];
-				if(V[u]!=prev)
+				if(abs(V[u]-prev)>1e-10)
 					val_converged=false;
 			}
 			
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 				V[u]=0;
 				for(auto v:successors[u])
 					V[u]+= edge_prob[mp(u,v)] * (edge_reward[mp(u,v)] + lambda * V[v]);
-				if(V[u]!=prev)
+				if(abs(V[u]-prev)>1e-10)
 					val_converged = false;
 			}
 		}
