@@ -24,6 +24,8 @@ map<int, long double> V[2];
 int main(int argc, char **argv)
 {
 	
+	srand(1234);
+	
 	ifstream cin(argv[1]);
 	
 	int cnt_choose, cnt_probability, cnt_edge;
@@ -67,9 +69,15 @@ int main(int argc, char **argv)
 	
 	//start of value iteration
 	for(auto u:choose_vertices)
-		V[0][u]=0;
+	{
+		V[0][u]=rand();
+		V[1][u]=rand();
+	}
 	for(auto u:probability_vertices)
-		V[0][u]=0;
+	{
+		V[0][u]=rand();
+		V[1][u]=rand();
+	}
 	
 	//iterate
 	bool converged=false;
@@ -85,7 +93,7 @@ int main(int argc, char **argv)
 			for(auto v:successors[u])
 				V[iter][u] += edge_prob[mp(u, v)] * ( edge_reward[mp(u, v)] + lambda * V[previter][v] );
 				
-			if(abs(V[iter][u]-V[previter][u])>1e-8)
+			if(V[iter][u]!=V[previter][u])
 				converged = false;
 		}
 		
@@ -97,7 +105,7 @@ int main(int argc, char **argv)
 			for(auto v:successors[u])
 				V[iter][u] = max(V[iter][u], edge_reward[mp(u, v)] + lambda * V[previter][v]);
 				
-			if(abs(V[iter][u]-V[previter][u])>1e-8)
+			if(V[iter][u]!=V[previter][u])
 				converged = false;
 		}
 		
