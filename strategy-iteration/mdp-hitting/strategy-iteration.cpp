@@ -24,6 +24,8 @@ map<int, int> sigma;
 int main(int argc, char **argv)
 {
 	
+	srand(1222);
+	
 	ifstream cin(argv[1]);
 	
 	int cnt_choose, cnt_probability, cnt_edge;
@@ -68,10 +70,7 @@ int main(int argc, char **argv)
 	{
 		if(successors[u].size()==0)
 			successors[u].insert(u);
-		if(u==target)
-			V[u]=1;
-		else
-			V[u]=0;
+		V[u]=rand();
 		sigma[u]=*successors[u].begin();
 	}
 	for(auto u:probability_vertices)
@@ -81,10 +80,7 @@ int main(int argc, char **argv)
 			successors[u].insert(u);
 			edge_prob[mp(u,u)]=0;
 		}
-		if(u==target)
-			V[u]=1;
-		else
-			V[u]=0;
+		V[u]=rand();
 	}
 	//iterate
 	
