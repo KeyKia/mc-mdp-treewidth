@@ -25,6 +25,8 @@ map<int, int> sigma;
 int main(int argc, char **argv)
 {
 	
+	srand(1848);
+	
 	ifstream cin(argv[1]);
 	
 	int cnt_choose, cnt_probability, cnt_edge;
@@ -75,7 +77,7 @@ int main(int argc, char **argv)
 			edge_reward[mp(u,u)]=0;
 			edge_prob[mp(u,u)]=0;
 		}
-		V[u]=0;
+		V[u]=rand();
 		sigma[u]=*successors[u].begin();
 	}
 	for(auto u:probability_vertices)
@@ -86,7 +88,7 @@ int main(int argc, char **argv)
 			edge_reward[mp(u,u)]=0;
 			edge_prob[mp(u,u)]=0;
 		}
-		V[u]=0;
+		V[u]=rand();
 	}
 	
 	//iterate
@@ -116,7 +118,7 @@ int main(int argc, char **argv)
 			{
 				auto prev = V[u];
 				V[u] = edge_reward[mp(u, sigma[u])] + lambda * V[sigma[u]];
-				if(abs(V[u]-prev)>1e-9)
+				if(V[u]!=prev)
 					val_converged=false;
 			}
 			
@@ -126,7 +128,7 @@ int main(int argc, char **argv)
 				V[u]=0;
 				for(auto v:successors[u])
 					V[u]+= edge_prob[mp(u,v)] * (edge_reward[mp(u,v)] + lambda * V[v]);
-				if(abs(V[u]-prev)>1e-9)
+				if(V[u]!=prev)
 					val_converged = false;
 			}
 		}
