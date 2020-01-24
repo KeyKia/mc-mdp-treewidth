@@ -25,10 +25,7 @@ with open(input_file) as inp:
             out.write('%s %s\n' % (from_+1, to+1))
 
             if from_ not in choose_vertices and from_ not in prob_vertices:
-                if random.random() < 0.4:
-                    prob_vertices.add(from_)
-                else:
-                    choose_vertices.add(from_)
+                prob_vertices.add(from_)
 
             if from_ in choose_vertices:
                 choose_edges.append((from_, to))
@@ -37,10 +34,7 @@ with open(input_file) as inp:
 
 for state in range(states):
     if state not in choose_vertices and state not in prob_vertices:
-        if random.random() < 0.4:
-            prob_vertices.add(state)
-        else:
-            choose_vertices.add(state)
+        prob_vertices.add(state)
 
 with open(graph_file, 'w') as out:
     out.write("Choose Vertices:\n")

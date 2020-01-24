@@ -44,19 +44,21 @@ with open(input_file) as inp:
 with open(graph_file, 'w') as out:
     out.write("Choose Vertices:\n")
     out.write("Number of Vertices: %s\n" % len(choose_vertices))
+    choose_vertices = [v+1 for v in choose_vertices]
     out.write(' '.join(map(str, choose_vertices)) + "\n")
 
     out.write("Probability Vertices:\n")
     out.write("Number of Vertices: %s\n" % len(prob_vertices))
+    prob_vertices = [v+1 for v in prob_vertices]
     out.write(' '.join(map(str, prob_vertices)) + "\n")
 
     out.write("Choose Edges:\n")
     out.write("Number of Edges: %s\n" % len(choose_edges))
-    for edge in choose_edges:
-        out.write("%s %s\n" % edge)
+    for (v, u) in choose_edges:
+        out.write("%s %s\n" % (v+1, u+1))
 
     out.write("Probability Edges:\n")
     out.write("Number of Edges: %s\n" % len(prob_edges))
-    for edge in prob_edges:
-        out.write("%s %s %s\n" % edge)
+    for (v, u, p) in prob_edges:
+        out.write("%s %s %s\n" % (v+1, u+1, p))
 
