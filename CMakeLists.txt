@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.0.2)
 project(rmc-treewidth-code C)
 
 set(CMAKE_C_STANDARD 11)
 
 #MATH(EXPR stack_size "100 * 1024 * 1024") # 16 Mb
 #set(CMAKE_EXE_LINKER_FLAGS "-Wl,--stack,${stack_size}")
+set(CMAKE_C_FLAGS "-mcmodel=medium -O2")
 
 add_executable(mc-prob mc/mc_hitprob/mc_hitptob_main.c utils/vector.h utils/vector.c mc/mc_treedec.c mc/mc_treedec.h mc/mc_hitprob/mc_hitprob_solve.h)
 add_executable(sle utils/vector.h utils/vector.c sle/sle_main.c sle/sle_treedec.c sle/sle_treedec.h sle/derive_independent_eqs.h sle/gaussian_elimination.h)
