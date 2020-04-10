@@ -1,6 +1,0 @@
-firewire_abst with k=5 -> treewidth <= 20
-csma2_2 -> treewidth <= 20
-wlan_dl with deadline=8 -> treewidth <= 20
-firewire_impl_dl with deadline=10 and delay=5 -> treewidth <= 15
-consensus with k=1 -> treewidth <= 25
-zerconf with reset=true and N=1 and K=1 -> treewidth <= 20

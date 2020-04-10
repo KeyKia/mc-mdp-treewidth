@@ -1,1 +1,0 @@
-filter(printall, P=? [F x=0]);

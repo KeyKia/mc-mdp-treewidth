@@ -1,1 +1,0 @@
-filter(print, Pmax=? [F x=3]);

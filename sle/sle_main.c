@@ -17,7 +17,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-#include "../utils/vector.h"
+#include "../commons/vector.h"
 #include "sle_treedec.h"
 #include "derive_independent_eqs.h"
 
@@ -35,7 +35,7 @@ vector removed_order;
 void input()
 {
 
-    FILE *fp = fopen("/home/kiarash/Desktop/rmc/rmc-treewidth-code/sle/example.txt", "r");
+    FILE *fp = fopen("./example.txt", "r");
     int i, j;
 
     /* read the equations */

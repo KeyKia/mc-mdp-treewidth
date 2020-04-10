@@ -26,6 +26,4 @@ sed '$d' outputs/output.txt | sponge outputs/output.txt
 cp outputs/output.txt outputs/raw_outputs/${obj}.txt
 mkdir -p outputs/${obj}
 
-python outputs/transform.py outputs/output.txt outputs/${obj}
-
 done

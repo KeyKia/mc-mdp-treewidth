@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../utils/vector.h"
+#include "../commons/vector.h"
 #include "sle_treedec.h"
 #include "gaussian_elimination.h"
 
