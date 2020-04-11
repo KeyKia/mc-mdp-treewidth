@@ -66,10 +66,10 @@ as per the experiments you need:
 
 The implemented approaches can be compiled using cmake in a straight-forward manner:
 
-```
-mkdir build && cd build
-cmake..
-make
+```bash
+$ mkdir build && cd build
+$ cmake..
+$ make
 ```
 
 Now, simply run the `run.sh` script in each experiment directory to run it on the dacapo benchmark
