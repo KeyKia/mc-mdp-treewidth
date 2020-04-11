@@ -1,8 +1,0 @@
-<component name="libraryTable">
-  <library name="dacapo-9.12-MR1-bach">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/benchmark/dacapo/libs/dacapo-9.12-MR1-bach.jar!/" />
-    </CLASSES>
-    <SOURCES />
-  </library>
-</component>
