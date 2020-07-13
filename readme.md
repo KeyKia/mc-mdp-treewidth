@@ -3,7 +3,7 @@
 This repository contains proof-of-concept implementations of the algorithms
 described in the paper: 
 [Faster Algorithms for Quantitative Analysis of Markov Chains and Markov Decision Processes 
-with Small Treewidth](https://hal.archives-ouvertes.fr/hal-02534237)
+with Small Treewidth](https://arxiv.org/abs/2004.08828)
 and necessary scripts to replicate the experiments.
 
 The implemented methods contained in this repository are:
@@ -14,6 +14,7 @@ The implemented methods contained in this repository are:
   - Hitting probability computation for MDPs with small treewidth
   - Discounted sums of rewards computation for MDPs with small treewidth
 - Linear System of Equations solver given small treewidth of the primal graph
+- Classical value and strategy iteration
 
 
 In addition, this also contains conversion scripts to operate other solvers and model-checkers, 
@@ -30,7 +31,7 @@ for the corresponding task on the dacapo benchmark suite
 - `sle` contains the low-treewidth system of linear equations solver
 - `commons` contains the tree decomposition and other implementations common to all approaches
 - `utils` contains scripts for converting inputs formats
-- `benchmarks` contains the dacapo benchmark suite used for the comparisons
+- `benchmarks` is the directory where the dacapo benchmark suite should be placed
 
 Using the Docker container
 ---------------------------
